@@ -1,0 +1,146 @@
+---
+title: "APPLIED DATA SCIECNE 2019/2020"
+author: "Bennett Kleinberg (bennett.kleinberg@ucl.ac.uk)"
+date: "27/09/2019"
+output:
+  html_document:
+    theme: paper
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+  pdf_document:
+    toc: yes
+subtitle: Department of Security and Crime Science, UCL
+---
+
+**THIS MODULE HANDBOOK IS STILL IN PROGRESS**
+
+## Introduction
+
+This MSc module introduces students to the field of data science and provides them with the conceptual understanding of the underlying principles. The students will be able to address crime and security problems in a computational manner (e.g., using data-driven crime analysis) and will become critical consumers of data science approaches. It will also allow students to understand the approaches which must be taken to translate these theoretical concepts into real-world applications used by the police and security services, as well in academia to influence and drive government policy.
+
+The techniques covered in this module will be of relevance to students undertaking a data science-related independent research project as well as to those who wish to pursue a career in a data science or analyst role.
+
+## Dates & times
+
+The module is running in Term 2, 2019/2020, from 13 January 2020 - 27 March 2020.
+
+- Time and date: Thursdays, 2-4pm.
+- Each session includes a lecture and a tutorial (practical session)
+
+UCL timetable page: [https://timetable.ucl.ac.uk/tt/createCustomTimet.do#](https://timetable.ucl.ac.uk/tt/createCustomTimet.do#)
+
+## Contact & resources
+
+- Bennett Kleinberg, Assistant Professor in Data Science, bennett.kleinberg@ucl.ac.uk
+- TA: Felix Soldner, Doctoral researcher, felix.soldner@ucl.ac.uk
+
+The **moodle page** will accompany this module [here](XXX).
+
+Q&A forum: if you have a questions/problem that affects not just you or that you feel others would be interested in too, then please use [the Q&A forum](XXX).
+
+## Learning outcomes
+
+Upon successful completion of this module, you will be able to:
+
+- develop a holistic understanding of what Data Science encompasses and its pervasive influence in modern life, including its impact within law enforcement, crime analysis and security science
+-	understand of key mathematical, computational, and statistical analysis techniques employed in the field of security to determine trends and patterns in measured crime data
+- retrieve data from unstructured sources through web-scraping techniques
+- write the code needed for the analytical steps in R
+- appreciate the fundamentals of supervised and unsupervised machine learning
+- understand the methodologies used to extract features from data.
+- use techniques used in natural language processing to gain insights from text data
+- discuss the ethical issues concerned with deploying latest advances in AI to areas such as criminal. justice, profiling
+- understand the role that open data and the open science movement is playing in society, from academic research and the private sector, to shaping government policy
+
+## Learning hours
+
+This module is worth 15 UCL credits (= 7.5 ECTS) which equals to 150 hours of study, i.e. 150h/11 weeks (incl reading week) = 14 hours per week.
+
+_Note that the content structure and the assessment assumes that you spend on average that amount of time with this module._
+
+| Component                    	| Amount 	| Duration 	| Total hours 	|
+|------------------------------	|--------	|----------	|-------------	|
+| Lectures                     	| 10     	| 1h       	| 10h         	|
+| Tutorials/practicals         	| 10     	| 1h       	| 10h         	|
+| Assessment: class test       	| 1      	| 1.5h     	| 1.5h        	|
+| Assessment: project          	| 1      	| 40.5h    	| 40.5h       	|
+| Homework/revision/self-study 	| 11     	| 8h       	| 88h         	|
+| TOTAL                        	| -      	| -        	| 150         	|
+
+
+## Structure
+
+The general structure of this module is as follows: there are five content blocks (web data collection, text mining, machine learning, data visualisation, advanced techniques) which each will be covered in weekly 2h-sessions consisting of lectures and tutorials. The lectures cover the approaches on a conceptual (what do they do?) and functional level (how do they work?). The tutorials are practical sessions in which you will learn how to implement the techniques in the R programming language. During the tutorials, we will be there to assist you and help you. As preparation for each tutorial, you will be given homework that is required to helps you consolidate the concepts and build your R skills portfolio.
+
+## Timetable
+
+| Week 	| Date   	| Topic        	| Slides     	| Homework   	|
+|------	|--------	|--------------	|------------	|------------	|
+| 21   	| 16 Jan 	| Web data collection I	| ...to come 	| ...to come 	|
+| 22   	| 23 Jan 	| Web data collection II | ...to come 	| ...to come 	|
+| 23   	| 30 Jan 	| Text mining I 	| ...to come 	| ...to come 	|
+| 24   	| 6 Feb  	| Text mining II 	| ...to come 	| ...to come 	|
+| 25   	| 13 Feb 	| Advanced text mining	| ...to come 	| ...to come 	|
+| 26   	| -      	| READING WEEK 	|            	|            	|
+| 27   	| 27 Feb 	| Machine learning I 	| ...to come 	| ...to come 	|
+| 28   	| 5 Mar  	| Machine learning II 	| ...to come 	| ...to come 	|
+| 29   	| 12 Mar 	| Data visualisation	| ...to come 	| ...to come 	|
+| 30   	| 19 Mar 	| Advances in Data Science 	| ...to come 	| ...to come 	|
+| 31   	| 26 Mar 	| Class test             	| N/A 	| N/A 	|
+
+
+## Materials
+
+### Software
+
+We will use the R programming language. All packages, required resources and tools needed are openly available and free to download to any computer. We strongly encourage students to bring their own laptops to the tutorials so they can customise their work environment. However, we will have a computer cluster available where you can use the UCL computers.
+
+### Literature
+
+We will provide background reading and literature for each week in advance.
+
+- A resource that we will use throughout and recommend keeping as a go-to guide is Max Kuhn & Kjell Johnson's book [Applied Predictive Modelling](https://www.springer.com/us/book/9781461468486) (in R). You will find this book freely available to you as UCL student through UCL Library's [free e-book access to this book](https://ucl-new-primo.hosted.exlibrisgroup.com/primo-explore/fulldisplay?docid=TN_springer_s978-1-4614-6849-3_216330&context=PC&vid=UCL_VU2&lang=en_US&search_scope=CSCOP_UCL&adaptor=primo_central_multiple_fe&tab=local&query=any,contains,Applied%20Predictive%20Modeling&offset=0).
+- An excellent guide to using R for Data Science is the [book with the same title written by Hadley Wickham & Garrett Grolemund](https://r4ds.had.co.nz/), which published online.
+
+### Data
+
+All datasets used are open-source and available without restrictions.
+
+
+## Content details
+
+_to be populated_
+
+## Assessment
+
+### Class test
+
+- Weight for final grade: 30%
+- Learning outcomes tested: (1) demonstrating knowledge of a broader range of analytical techniques used in the field of Security and Crime Science, (2) understanding the purpose, advantages and disadvantages of different forms of data science techniques, (3) interpreting the results of data science techniques.
+- Date: tbc
+
+**Details:** This 1.5-hour closed-book test covers theoretical, technical and conceptual aspects of the lectures, tutorials and literature. You will be given 15 multiple-choice questions. 
+
+
+### Applied Data Science Project
+
+- Weight for final grade: 70%
+- Learning outcomes tested: (1) demonstrating knowledge of a broader range of analytical techniques used in the field of Security and Crime Science, (2) performing data science analyses on crime and/or-security related issues, (3) applying the data science pipeline on crime and/or-security related issues, (4) interpreting and effectively reporting the results of said techniques
+- Deadline: tbc
+- Word count limit: 3000 words (excl. code supplement; do not exceed this word count limit!)
+
+**Feedback sessions:** Since a full project is a major step in your data science skills career, we will hold one feedback session to help you in the process.
+
+... details on feedback session
+
+**Assessment details:** NEEDS UPDATING!!! This assessment is the capstone project of the module. It requires you to address a crime and security science research problem in the full data science workflow (e.g., obtaining the data, processing the data, modelling the data, building predictive models, reporting on the findings, interpreting the outcomes). You will write a brief report on your project (a template will be provided) and you have to submit the R code needed to reproduce your findings. After passing this assessment, you will have the demonstrated the skills to solve a problem using data science techniques.
+
+## Attendance requirement
+
+We are obliged to record the attendance at all sessions (lectures and tutorials) and each student will have to attend at least 70% of the sessions to be able to pass the module. If you cannot attend for a good reason, please let the TA know about this well in advance. *We strongly advise you to attend all sessions as this eases the assessment for you and will help you get the most out of this module.*
+
+------
+
+
