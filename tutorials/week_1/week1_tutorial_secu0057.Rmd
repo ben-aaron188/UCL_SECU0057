@@ -1,0 +1,214 @@
+---
+title: "Tutorial, Week 1: Web data collection 1"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "16 Jan 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- building your first small programm to access web data using an API access point
+- using web data to examine temporal patterns
+- accessing the HTML structure of web pages
+
+
+_Note: this tutorial assumes that you have [obtained an API key from the Guardian](https://open-platform.theguardian.com/access/) as per the email we sent a few days ago._
+
+
+## Task 1: Building an access pipeline to the Guardian
+
+1. Install and load the GuardianR package
+
+```{r}
+#Your R code comes here
+#You can run the code directly in this notebook
+
+```
+
+2. Build your first query
+
+Search for articles in The Guardian around a topic of your choice (choose one that gives you more than 20 results for a month). Note that exact keyword searches need to be defined slighlty differently (see p2 on [https://cran.r-project.org/web/packages/GuardianR/GuardianR.pdf](https://cran.r-project.org/web/packages/GuardianR/GuardianR.pdf)).
+
+```{r}
+#Replace your info in the placeholder below and uncomment the code (remove the #)
+
+# get_guardian("SOME SEARCH TERM",
+#              from.date="START_DATE",
+#              to.date="END_DATE",
+#              api.key="YOUR_ACCESS_KEY")
+```
+
+Note that running the above does not store the results internally as an object but merely prints the output to the console. To fix this, store the query as a variable called `my_query_1`
+
+```{r}
+#Your R code comes here
+```
+
+3. Run multiple search queries for 6 months
+
+Similar to most APIs, the Guardian has restrictions as to how much data you can retrieve with one query. Typically, one API call is limited to a month. To circumvent this, run six different queries, each containing a date range of one month using your search query above.
+
+Name these queries `my_query_1_july`, `my_query_1_aug`, `my_query_1_sept`, ..., `my_query_1_dec` for the last six months of the year 2019.
+
+```{r}
+#
+```
+
+Now we want to join these six variables - each holding one month worth of search query results - into one object. To do this, run the following command:
+
+```{r}
+#Insert all six variable created above in the list argument and uncomment and run the code.
+
+# guardian_query_six_months = do.call(rbind, list(my_query_1_july
+#                                                 , my_query_1_aug
+#                                                 , ...)
+```
+
+Now you have one object with all search results for the months July - Dec 2019 for your search query.
+
+
+## Task 2: Identifying patterns in retrieved web data
+
+We now use the object you created above to have a closer look at the data. 
+
+1. Examine the data for outliers in the article length
+
+The data contains a column with the word count for each article. That column is not yet in a numerical format and needs to be converted. To do this, overwrite the column using the command below:
+
+```{r}
+#Uncomment and run the code
+
+# guardian_query_six_months$word_count_converted = as.numeric(as.character(guardian_query_six_months$wordcount))
+```
+
+Now plot the word count using the `plot` command to look for outliers.
+
+```{r}
+#Your code comes here
+```
+
+Aside from a visual inspection, we always want to have numerical certainty. Use the `table` command to assess how many word count values are larger than the mean plus 3 standard deviations.
+
+```{r}
+#Your code comes here
+```
+
+2. Looking for the temporal development of article length
+
+The data contains a column with the publication date for each article. We can transform that column to a computer-readable date by (i) extracting the day and (ii) assigning it to a date format. Uncomment and run the code below:
+
+```{r}
+#This line extracts the first 10 characters of the webPublicationDate string
+
+# guardian_query_six_months$date = substr(guardian_query_six_months$webPublicationDate, 1, 10)
+
+#Next we convert the new variable to a date format variable
+
+# guardian_query_six_months$date = as.Date(guardian_query_six_months$date, format = "%Y-%m-%d")
+```
+
+You can now sort the dataframe by date ([hint](https://www.statmethods.net/management/sorting.html)) and plot the date to see how the article length changed over time:
+
+```{r}
+# Sort the dataframe
+
+```
+
+For plotting, use the base R plot function and specify the x and y-axes separately:
+
+```{r}
+# Plot the word count over time
+
+```
+
+3. (Advanced) Assess how the article frequency changes over time
+
+You can now repeat the steps from above but instead of plotting the article length over time, you count how many articles were published by month.
+
+This requires an additional step: aggregating the number of data points by months. To do this, you have to do the following steps:
+
+- create a month variable based on the date variable ([hint](https://stackoverflow.com/questions/22603847/how-to-extract-month-from-date-in-r))
+- aggregate the data by month ([hint](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/aggregate))
+
+## Task 3: Accessing the HTML structure using your browser
+
+To start with proper webscraping, you need to understand the basic idea of HTML and how it is used to display webpages.
+
+Open your browswer (e.g. Firefox, Chrome, Safari) and go to the website for missing people in the UK: [https://www.missingpeople.org.uk/help-us-find.html](https://www.missingpeople.org.uk/help-us-find.html).
+
+Use the technique discussed in the lecture to inspect the HTML structure. Try to identify how the brief previews are structured that lead you to the detaills pages of each missing person.
+
+What do you notice?
+
+
+## Task 4: Retrieving the HTML structure of a webpage using R
+
+We can do the manual steps from above in a programmatic manner as well. We will do that in detail next week. For now, let's start with the basics and just obtain the core HTML structure using the `rvest` package.
+
+Install the `rvest` package first if you haven't done so.
+
+```{r}
+# Uncomment and run the code below
+
+# library(rvest)
+
+#This sets the base URL
+# base_url = "https://www.missingpeople.org.uk/help-us-find.html"
+
+#Now we access the full page using the read_html command
+# target = read_html(base_url)
+
+#Now we look for specific data on the webpage (note that the variable "target" contains a snapshot of the full HTML page now)
+#Replace the 'SOME CLASS' placeholder with a string that contains the class of the HTML objects of interest (note that you identify classes with a simple . --> e.g. if the class name was "class1", you would change the placeholder to ".class1")
+
+# target %>%
+#   html_nodes('SOME CLASS')
+```
+
+_Hint: look for the class of the div that contains each 'teaser'_
+
+---
+
+## Homework
+
+### Part 1: Accessing the preprint server arXiv
+
+Use the `aRxiv` package to build an access pipeline to the academic paper repository Arxiv.
+
+Read the installation guideline at [https://ropensci.org/tutorials/arxiv_tutorial/](https://ropensci.org/tutorials/arxiv_tutorial/) and - using the tutorial prepared there - to answer the following questions:
+
+- How many papers contain the wild card term "crim" in their title?
+- What is the title of the most recently submitted paper on arxiv in all categories?
+- Which author(s) submitted the first paper of 2020 in the computation and language category?
+
+
+### Part 2: Replicate code to access the Twitter API
+
+There are many APIs that allow you to use web data in a structured manner. Among the most frequently used (because most easily obtainable) data sources is Twitter. R offers an access point to Twitter as well and provides you with detailed functionality to retrieve Twitter data.
+
+Read through the documents of the `rtweet` package below:
+
+- [Package docs as pdf](https://cran.r-project.org/web/packages/rtweet/rtweet.pdf)
+- [Online documentation](https://www.rdocumentation.org/packages/rtweet/versions/0.6.9)
+
+Now have a look at the package website [https://rtweet.info/](https://rtweet.info/)
+
+Once you have done the above, try to replicate the example provided at [https://rtweet.info/articles/intro.html](https://rtweet.info/articles/intro.html). Once you have the code running, attempt to define some search queries of your own. You can skip the visualisations of you do not yet feel comfortable running this code.
+
+_Important:_ You need a Twitter account for this part of the homework. If you do not have one or do not wish to create one or use your account, you can skip this part.
+
+_Caution:_ Remember that an API typically allows for two-way access. You can retrieve data but you can also send data. This means that you can use the R package to Tweet under your account.
+
+
+### Part 3: Starting with your project
+
+Have a close look at the project assessment for this module. While many aspects (esp. the natural language processing part and the machine learning) will not be clear at this point, it is advisable that you start to map out a few ideas at this stage already. This can include ideas on data sources and the overall context of your project. These ideas can then be revisited throughout the module and will make it easy for you to run your project.
+
+Prepare some ideas. We will ask a few students next week to talk about their initial ideas.
+
+---
+
+
+
