@@ -148,8 +148,8 @@ Please ensure that you follow the guides below to setup your computer with the n
     - Morstatter, F., Pfeffer, J., Liu, H., & Carley, K. M. (2013). Is the Sample Good Enough? Comparing Data from Twitter’s Streaming API with Twitter’s Firehose. ArXiv:1306.5204 [Physics]. Retrieved from [http://arxiv.org/abs/1306.5204](http://arxiv.org/abs/1306.5204)
     - Soldner, F., Ho, J. C., Makhortykh, M., van der Vegt, I. W. J., Mozes, M., & Kleinberg, B. (2019). Uphill from here: Sentiment patterns in videos from left- and right-wing YouTube news channels. Proceedings of the Third Workshop on Natural Language Processing and Computational Social Science, 84–93. [https://doi.org/10.18653/v1/W19-2110](https://doi.org/10.18653/v1/W19-2110)
     - [MDN HTML basics](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics), [MDN HTML tables](https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Basics)
-- Slides: 
-- Tutorial + Homework: 
+- Slides: [Week 1: Web data collection 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_1/week1_secu0057.html)
+- Tutorial + Homework: [Tutorial, week 1: web data collection](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_1/week1_tutorial_secu0057.nb.html)
 
 ### Week 2 - Web data collection II (23 Jan)
 
