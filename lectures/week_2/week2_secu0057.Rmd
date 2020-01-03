@@ -1,0 +1,465 @@
+---
+title: "Week 2: Web data collection 2"
+subtitle: "SECU0057"
+author: "Bennett Kleinberg"
+date: "23 Jan 2020"
+output:
+  revealjs::revealjs_presentation:
+    theme: moon
+    highlight: zenburn
+    center: true
+---
+
+##  {data-background="../img/ucl_artwork/ucl-banner-land-darkblue-rgb.png" data-background-size="70%" data-background-position="top" data-background-opacity="1"}
+
+</br>
+
+Applied Data Science
+
+## Week 2: Web data collection 2
+
+## Today
+
+- more HTML
+- basic browser simulation
+
+## Three elements of a webpage
+
+1. Structure
+2. Behaviour
+3. Style
+
+## Raw HTML architecture
+
+```{html}
+<!DOCTYPE html>
+<html>
+<body>
+
+HERE COMES THE VISIBLE PART!!
+
+</body>
+</html>
+```
+
+## Tables
+
+```{html}
+<table>
+  <tr>
+    <th>Departments</th>
+    <th>Location</th>
+  </tr>
+  <tr>
+    <td>Dept. of Security and Crime Science</td>
+    <td>Division of Psychology and Language Sciences</td>
+  </tr>
+  <tr>
+    <td>35 Tavistock Square</td>
+    <td>26 Bedford Way</td>
+  </tr>
+</table> 
+```
+
+## Html `<table>...</table>`
+
+<img data-src="../img/html5.png">
+
+## Lists
+
+```{html}
+<ul>
+  <li>Terrorism</li>
+  <li>Cyber Crime</li>
+  <li>Data Science</li>
+</ul> 
+```
+
+<img data-src="../img/html6.png">
+
+## Identifying elements: IDs
+
+Elements (can) have IDs:
+
+```{html}
+<p id='paragraph1'>This is a paragraph</p>
+<img id='ucl_image' src="../img/ucl.jpg">
+```
+
+Same for tables, links, etc.
+
+##
+
+Every element can have an ID.
+
+You need unique IDs! Two elements cannot have the same ID.
+
+##  Identifying elements: classes
+
+Common elements (can) have CLASSES:
+
+```{html}
+<p id="paragraph1" class="paragraph_class">I am the first paragraph</p>
+<p class="paragraph_class">I am the second paragraph</p>
+<p class="paragraph_class">I am the third paragraph</p>
+
+```
+
+Multiple elements can have the same class.
+
+## Webscraping in practice
+
+- FBI's missing persons
+- Dodgy exotic animals trading page (tutorial)
+
+## FBI's missing persons
+
+[https://www.fbi.gov/wanted/kidnap](https://www.fbi.gov/wanted/kidnap)
+
+_How could we explore the target page?_
+
+## Aims
+
+1. Getting a list of all names
+2. Storing the bio information
+
+## Getting started
+
+Set up your workspace first:
+
+```{r}
+library(rvest)
+
+target_url = 'https://www.fbi.gov/wanted/kidnap'
+```
+
+## 1. Getting a list of all names
+
+Access the full html page (snapshot-mode):
+
+```{r}
+target_page = read_html(target_url)
+target_page
+```
+
+## 1. Get a list of all names
+
+Key here: look for the `<h3>` heading with class `title`:
+
+```{r}
+all_titles = target_page %>%
+  html_nodes('h3.title')
+
+#note: equivalent to "html_nodes(target_page, 'h3.title')"
+```
+
+
+##
+
+```{r}
+head(summary(all_titles))
+```
+
+##
+
+```{r}
+length(all_titles)
+```
+
+What do you notice?
+
+## Taking a closer look
+
+```{r}
+all_titles[1]
+```
+
+It's the text of the `<a href=...>` tag.
+
+## 1. Getting a list of all names
+
+1. Access the full html page `read_html(target_url)`
+2. Search all h3 headings with class "title" `html_nodes('h3.title')`
+3. Find all `<a >` tags (= links) `html_nodes('a')`
+4. Extract the text `html_text()`
+
+## Combined
+
+```{r}
+all_names = target_page %>%
+  html_nodes('h3.title') %>%
+  html_nodes('a') %>%
+  html_text()
+```
+
+##
+
+```{r}
+all_names
+```
+
+Getting all names: done!
+
+## 2. Storing the bio information
+
+We know: there's a table with class `wanted-person-description` that contains the data we want.
+
+**But:** we need to access each missing person!
+
+For-loops to the rescue...
+
+## 2. Storing the bio information
+
+1. _Access the full html page_
+2. _Search all h3 headings with class "title"_
+3. _Find all `<a >` tags (= links)_
+4. Extract the ~~text~~ actual link
+5. Access that page
+6. Extract the table with class `wanted-person-description`
+
+## Getting the link to each person
+
+```{r}
+all_persons_links = target_page %>%
+  html_nodes('h3.title') %>%
+  html_nodes('a') %>%
+  html_attr('href')
+```
+
+##
+
+```{r}
+head(all_persons_links)
+length(all_persons_links)
+```
+
+
+## 2. Storing the bio information
+
+Before you write a loop...
+
+```{r}
+lisa_maria = all_persons_links[1]
+temp_target_url = lisa_maria
+temp_target_page = read_html(temp_target_url)
+```
+
+
+## Single-case proof
+
+```{r}
+description = temp_target_page %>%
+  html_nodes('table.wanted-person-description') %>%
+  html_table()
+
+description
+```
+
+## The for-loop
+
+1. do this for each link
+2. store it somewhere (easiest: in a list)
+3. log progress
+
+##
+
+```{r}
+list_for_data = list()
+for(i in all_persons_links){
+  print(paste('Accessing:', i))
+  temp_target_url = i
+  temp_target_page = read_html(temp_target_url)
+  description = temp_target_page %>%
+    html_nodes('table.wanted-person-description') %>%
+    html_table()
+  index_of_i = which(i == all_persons_links)
+  list_for_data[[index_of_i]] = description
+  print('--- NEXT ---')
+}
+```
+
+## 
+
+Now we have a list of tables.
+
+Each table contains the details of one missing person:
+
+```{r}
+# thirteenth element in the list
+list_for_data[[13]]
+```
+
+
+## 
+
+### Static vs dynamic web-scraping
+
+What is dynamic content?
+
+##
+
+```{javascript eval=F}
+setTimeout(function(){ 
+  alert("This is a delayed alert"); 
+  }, 4000);
+```
+
+## Scraping dynamic webpages
+
+- problem for the snapshot method
+- what if content loads after, say, 5 seconds?
+- or if you can only send a request every 5 seconds?
+
+## Simulating timeouts
+
+1. we need a way to simulate a browser
+2. we need to simulate human user interaction
+
+Enter: **RSelenium**
+
+
+## Setup
+
+```{r eval=F}
+library(RSelenium)
+
+#make a connection
+selenium_firefox = rsDriver(browser=c("firefox"))
+
+#start a driver
+driver = selenium_firefox$client
+```
+
+
+## 
+
+_Live demo_
+
+## Backup
+
+```{r eval=F}
+#set target url
+target_url = 'https://www.fbi.gov/wanted/kidnap'
+
+#navigate the driver (= simulated browser) to the target url
+driver$navigate(target_url)
+```
+
+## Backup (1)
+
+```{r eval=F}
+# 1. set wait intervals
+list_for_requests = list()
+
+for(i in 1:5){
+  parsed_pagesource <- driver$getPageSource()[[1]]
+  result <- read_html(parsed_pagesource) %>%
+    html_nodes('h3.title') %>%
+    html_nodes('a')
+  
+  list_for_requests[[i]] = result  
+  print(paste('Sent request at:', Sys.time(), sep=" "))
+  
+  Sys.sleep(5) 
+}
+```
+
+## Backup (2)
+
+```{r eval=F}
+# 2. simulate scroll
+#navigate the driver (= simulated browser) to the target url
+driver$navigate(target_url)
+
+#find the html body
+page_body = driver$findElement("css", "body")
+
+#send a scroll command (note that this is a page_down request in Javascript)
+page_body$sendKeysToElement(list(key = "page_down"))
+```
+
+## Backup (3)
+
+```{r eval=F}
+# 3. simulate multiple scrolls
+#navigate the driver (= simulated browser) to the target url
+driver$navigate(target_url)
+
+#find the html body
+page_body = driver$findElement("css", "body")
+
+#send multiple scroll commands in a loop
+for(i in 1:10){
+  page_body$sendKeysToElement(list("key"="page_down"))
+  
+  # allow some time for this to happen (here: 3 seconds)
+  Sys.sleep(3) 
+}
+
+```
+
+## Backup (3 cont'd)
+
+```{r eval=F}
+#now access the page source (important: you need to do this through the driver)
+parsed_pagesource <- driver$getPageSource()[[1]]
+
+#now we can scrape from the page after the simulation
+full_results <- read_html(parsed_pagesource) %>%
+  html_nodes('h3.title') %>%
+  html_nodes('a') %>%
+  html_attr('href')
+
+length(full_results)
+```
+
+## Backup (close)
+
+```{r eval=F}
+# close the driver and the server
+driver$close()
+
+selenium_firefox$server$stop()
+```
+
+
+## Notes on webscraping
+
+- highly customisable (= juicy data)
+- basically: "anything goes"
+- can be unstable/sensitive to html changes
+
+## Same idea, different HTML
+
+<img data-src="../img/ebay.png">
+
+## Same idea, different HTML
+
+<img data-src="../img/mispersuk.png">
+
+## Same idea, different HTML
+
+<img data-src="../img/trustpilot.png">
+
+## Same idea, different HTML
+
+<img data-src="../img/exoticanimals.png">
+
+## RECAP
+
+- **Always: problem first, never the method first!**
+- **Method follows problem!**
+- HTML structure key to webscraping
+- Webscraping:
+    - understanding the structure of a webpage
+    - exploiting that structure for web-scraping
+- principle is always the same: understand + exploit the html structure
+
+## What's next?
+
+- Today's tutorial: dynamic scraping of the FBI's website, full pipeline for exotic animal trading forum
+- Homework: Rvest tutorials, webscraping practice
+
+
+Next week: Text Mining 1
+

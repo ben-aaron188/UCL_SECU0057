@@ -1,0 +1,115 @@
+---
+title: "Tutorial, Week 2: Web data collection 2"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "20 Jan 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- extracting the free text details information for missing persons
+- using RSelenium to scrape data from the FBI's most wanted fugitives webpage
+- scraping a website for (grayzone) exotic animal trading
+
+
+_Note: this tutorial assumes that you the packages `rvest` and `RSelenium` installed._
+
+
+## Task 1: Extracting the free text details information for missing persons
+
+In the lecture, we covered how we can scrape data from the FBI's missing persons website. Aside from the person information in the table, we might also be interested in the free text entries under the 'Details' heading (e.g. [https://www.fbi.gov/wanted/kidnap/steven-earl-kraft-jr-1](https://www.fbi.gov/wanted/kidnap/steven-earl-kraft-jr-1)).
+
+Scrape the 'Details' data for each of the first 40 missing persons and store the data locally in a list. The source page is: [https://www.fbi.gov/wanted/kidnap](https://www.fbi.gov/wanted/kidnap)
+
+```{r}
+#Your code comes here
+```
+
+
+## Task 2: Scraping data from the FBI's most wanted fugitives webpage with RSelenium
+
+If you look at the FBI's section on wanted fugitives - [https://www.fbi.gov/wanted/fugitives](https://www.fbi.gov/wanted/fugitives) - you can see that there are well above 200 people on that list.
+
+Similar to the example in the lecture, you can see that not all entries are loaded directly. This means that a standard, snapshot approach does not access all entries but merely the first 40 (in this case).
+
+Use [`RSelenium`]() and the [R Webscraping Cheat Sheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md) to answer the following questions:
+
+- How many male fugitives are wanted for "counterintelligence" and how many for female fugitives for "white collar crime"? (hint: you will need the `table()` command once you have all the data in place).
+- What is the male-to-female ration of wanted fugitives?
+
+Hint - You may want to use a procedure as follows:
+
+1. load RSelenium
+2. setup a connection to a simulated browser
+3. access the webpage
+4. simulate the needed user behaviour
+5. scrape the webpage
+6. extract the relevant data and answer the questions
+
+
+```{r}
+#Your code comes here
+```
+
+There are several ways of solving this problem. Depending on your approach, you may find these hints useful:
+
+- use the `html_table()` function of `rvest` to store data as a dataframe
+- have a look at this SO question on how to transpose (= flip rows and colums of) a dataframe: [https://stackoverflow.com/q/6778908/3421089](https://stackoverflow.com/q/6778908/3421089)
+- you may want to decide to only use columns that are relevant as not all columns are present in all cases
+
+
+## Task 3: Scraping data from the website _exoticanimalsforsale.net_
+
+The webpage [https://www.exoticanimalsforsale.net/animalsforsale.asp](https://www.exoticanimalsforsale.net/animalsforsale.asp) "offers" a range of exotic animals for sale online. 
+
+Use webscraping to extract data from this trading website. The data you want to scrape is up to you. Some ideas are:
+
+- animal descriptions
+- the asking price
+- the location
+
+```{r}
+#Your code comes here
+```
+
+
+
+---
+
+## Homework
+
+### Part 1: Refining your `rvest` skills
+
+For the below you will also need the `tidyverse` package set in R. This framework is a set of packages that offers a unified way to deal with data (i.e. before analysing the data) in R. You do not need to fully use the tidyverse way of using R but if you want to, we encourage this.
+
+Replicate the three tutorials on different webscraping challenges below:
+
+- Scraping consumer reviews from Trustpilot: [https://www.datacamp.com/community/tutorials/r-web-scraping-rvest](https://www.datacamp.com/community/tutorials/r-web-scraping-rvest)
+- Scraping text of misrepresentations of D. Trump: [https://towardsdatascience.com/web-scraping-tutorial-in-r-5e71fd107f32](https://towardsdatascience.com/web-scraping-tutorial-in-r-5e71fd107f32)
+- Scraping artist data and lyrics of their songs: [https://towardsdatascience.com/learn-to-create-your-own-datasets-web-scraping-in-r-f934a31748a5](https://towardsdatascience.com/learn-to-create-your-own-datasets-web-scraping-in-r-f934a31748a5)
+
+
+### Part 2: Web scraping practice
+
+The website [http://toscrape.com/](http://toscrape.com/) is a sandbox to refine and test your webscraping skills. You can find two webpages there: a book store and a quotes website. Try to scrape these pages.
+
+The book store is non-dynamic and does not require any browser-simulation for the scraping. The quotes website contains more detailed HTML/Javascript features and is a bigger challenge.
+
+It's advisable to use the [R Webscraping Cheat Sheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
+
+
+### Part 3: Data collection for your project
+
+Now that you have a good basis to obtain data from web sources, start to think about the data collection for your project (i.e. which sources to scrape and how to implement this). You should start with some of the ideas from last week and begin with the R implementation. This will give you time to revise the approach and address (likely) hiccups along the way.
+
+### Part 4: Preparation for next week
+
+Please ensure that you have installed and can load the following R packages:
+
+- quanteda
+- stringr
+- readability
+
+---

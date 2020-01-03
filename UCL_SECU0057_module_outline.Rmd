@@ -159,12 +159,8 @@ Please ensure that you follow the guides below to setup your computer with the n
     - [MDN CSS first steps](https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started)
     - Ignatow & Mihalcea, 2018: C6 Web crawling
     - [Rvest package documentation](https://cran.r-project.org/web/packages/rvest/rvest.pdf)
-- Slides
-- Tutorial
-- Homework
-    - [Rvest tutorial 1](https://www.datacamp.com/community/tutorials/r-web-scraping-rvest)
-    - [Rvest tutorial 2](https://towardsdatascience.com/web-scraping-tutorial-in-r-5e71fd107f32)
-    - [Rvest tutorial 3](https://towardsdatascience.com/learn-to-create-your-own-datasets-web-scraping-in-r-f934a31748a5)
+- Slides: [Week 2: Web data collection 2]()
+- Tutorial + Homework: [Tutorial, week 2: web data collection 2]
 
 
 ### Week 3 - Text mining I (30 Jan)

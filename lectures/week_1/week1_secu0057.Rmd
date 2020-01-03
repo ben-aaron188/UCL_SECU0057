@@ -5,7 +5,7 @@ author: "Bennett Kleinberg"
 date: "16 Jan 2020"
 output:
   revealjs::revealjs_presentation:
-    theme: simple
+    theme: moon
     highlight: zenburn
     center: true
 ---
@@ -458,8 +458,8 @@ Is it just "there"?
 
 ## What's next?
 
-- Today's tutorial: 
-- Homework: 
+- Today's tutorial: - Today's tutorial: building your own API scraper, using the data, some HTML
+- Homework: arxiv scraping, Twitter access, project start
 
 
 Next week: Web scraping 2 (more HTML, browser simulation)
