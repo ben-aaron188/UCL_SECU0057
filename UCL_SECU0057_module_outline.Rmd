@@ -3,14 +3,14 @@ title: "APPLIED DATA SCIENCE (UCL SECU0057)"
 author: "Bennett Kleinberg (bennett.kleinberg@ucl.ac.uk)"
 date: "16/12/2019"
 output:
+  pdf_document:
+    toc: yes
   html_document:
     theme: paper
     toc: yes
     toc_float:
       collapsed: no
       smooth_scroll: no
-  pdf_document:
-    toc: yes
 subtitle: Department of Security and Crime Science, UCL
 urlcolor: blue
 ---
@@ -159,8 +159,8 @@ Please ensure that you follow the guides below to setup your computer with the n
     - [MDN CSS first steps](https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started)
     - Ignatow & Mihalcea, 2018: C6 Web crawling
     - [Rvest package documentation](https://cran.r-project.org/web/packages/rvest/rvest.pdf)
-- Slides: [Week 2: Web data collection 2]()
-- Tutorial + Homework: [Tutorial, week 2: web data collection 2]
+- Slides: [Week 2: Web data collection 2](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_2/week2_secu0057.html)
+- Tutorial + Homework: [Tutorial, week 2: web data collection 2](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_2/week2_tutorial_secu0057.nb.html)
 
 
 ### Week 3 - Text mining I (30 Jan)
