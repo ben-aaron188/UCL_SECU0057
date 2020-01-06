@@ -1,0 +1,172 @@
+---
+title: "Tutorial, Week 3: Text mining 1"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "30 Jan 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- understanding text data through numerical representations
+- examining a corpus of UK rap music
+- calculating and comparing readability scores
+
+_Note: this tutorial assumes that you have the packages `quanteda` and `stringr`._
+
+
+Tutorial: test whether zipfs law applies
+TFIDF on lyrics
+most readable text lyrics
+compare readabilities
+
+
+## Task 1: Understanding text data through numerical representations
+
+Before we can work with text data in a more advanced manner, it is good to understand how text data is represented numerically. R - and quanteda specifically - contain numerous "built-in" datasets that you can use to understand concepts that you have learned in the lectures.
+
+To get an overview of the packages that quanteda provides, have a look at the [online docs](https://quanteda.io/reference/index.html#section-data).
+
+With the command below, you can look at the dataset of all inaugural speeches of US presidents (uncomment and run):
+
+```{r}
+#summary(data_corpus_inaugural)
+```
+
+_Note: don't forget to load quanteda with the `library(...)` command._
+
+To access the actual texts, you can simply index the object: `data_corpus_inaugural[1]`. For now, rename the object to a variable called `US_speeches`:
+
+```{r}
+#Your code comes here
+```
+
+Find answers to the following questions:
+
+1. Which text has the highest number of characters per word? And whiich one the lowest?
+
+```{r}
+#Your code comes here
+```
+
+
+2. In which speech was the most punctuation used?
+
+```{r}
+#Your code comes here
+```
+
+
+3. Across all speeches, which token was used the most often?
+
+```{r}
+#Your code comes here
+```
+
+
+Task 2: Re-examining Zipf's law in US presidents' speeches
+
+From the required preparation, you will remember the essence of [Zipf's Law](https://www.youtube.com/watch?v=fCn8zs912OE). 
+
+Answer these two questions:
+
+1. Does the US speeches corpus support the finding of the 20 most common words in English language?
+
+```{r}
+#Your code comes here
+```
+
+Does this finding surprise you? What could explain this?
+
+2. For the first 10 most frequently occurring words in the corpus, does Zipf's Law apply? 
+
+Here we will simplify Zipf's Law to $freq_w \propto \frac{1}{rank_w}$, with $w$ being a given word. ($\propto$ stands for "proportional to").
+
+```{r}
+#Your code comes here
+```
+
+
+## Task 3: Examining a corpus of UK rap music
+
+For a research project related to a [study of UK drill music](https://arxiv.org/pdf/1911.01324.pdf), we have collated a dataset of UK rap music (non-drill). 
+
+You can access the dataset from: [](). Download it to the folder where this tutorial file is located and the read the `.RData` file into your R workspace through the command below (uncomment and run):
+
+```{r}
+#load('uk_rap_corpus.RData')
+```
+
+You now have a corpus object in your workspace called `uk_rap_corpus`. _(The ID variable is structured as follows: `artistname_songname`)_.
+
+Calculate the TFIDF for the whole corpus to answer the questions below:
+
+1. Which token has the highest TFIDF value in the song "Borders" by "M.I.A."?
+2. Choose one token of your choice and plot its TFIDF value for all songs? Did you expect this finding?
+3. Visualise the relationship between DF, IDF and log(IDF) as doen in the lecture. Use the 100 words with the highest document frequency.
+
+```{r}
+#Your code comes here
+```
+
+
+## Task 4: Calculating and comparing readability scores
+
+For the two corpora used in this tutorial - US speeches and UK rap lyrics - we are now interested in comparing the them on a range of text metrics.
+
+Answer the questions below:
+
+1. Which of the two corpora has the higher lexical diversity score?
+2. For each corpus, which text has the lowest readability as measured through the "Automated Readability Index"? (Hint: have a look at the `readability` package and the wrapper function [here](https://github.com/ben-aaron188/r_helper_functions/blob/master/get_single_readability.R))
+3. How did the readability of US presidents' speeches change over time?
+
+```{r}
+#Your code comes here
+```
+
+Finally: we now want to understand the relationship between readability, text meta indicators and lexical diversity.
+
+For each corpus separately: Calculate the Coleman-Liau index, the lexical diversity and the number of characters per word. Now plot each of the three combinations of these measures in a scatterplot. Did the findings confirm your expectation?
+
+```{r}
+#Your code comes here
+```
+
+
+What does this tell you about the relationship between these three aspects of text?
+
+---
+
+## Homework
+
+### Part 1: Text pre-processing
+
+Among the various researchers-degrees-of-freedom in natural language processing are decisions about:
+
+- the stemming of words
+- the removal of punctuation
+- the removal of stopwords
+- lower-casing the corpus
+- the sparsity trimming
+
+Use a corpus of your choice and build a TFIDF matrix for the original corpus and all possible combinations from the decisions to-be-made above. All of these can be done using base R and quanteda. 
+
+_Hint: for the sparsity trimming, have a look at [this function](https://quanteda.io/reference/dfm_trim.html)_.
+
+
+### Part 2: Practising with the `quanteda` package
+
+The R package {`quanteda`}(https://quanteda.io/index.html) is a powerful toolbox to deal with text data in R. You will likely need this package for the natural language processing part of your final project. Do learn more about this package, read through and replicate for yourself these two tutorials:
+
+- [Examining literature with quanteda in R](https://quanteda.io/articles/pkgdown/replication/digital-humanities.html)
+- [Analysing social media (Twitter) data with quanteda](https://quanteda.io/articles/pkgdown/examples/twitter.html)
+
+### Part 3: Preparation for next week
+
+Please ensure that you have installed and can load the following R packages:
+
+- syuzhet
+- qdap
+
+---

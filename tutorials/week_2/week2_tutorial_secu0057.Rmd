@@ -2,7 +2,7 @@
 title: "Tutorial, Week 2: Web data collection 2"
 subtitle: "SECU0057"
 author: "B Kleinberg"
-date: "20 Jan 2020"
+date: "23 Jan 2020"
 output: html_notebook
 urlcolor: blue
 ---
@@ -14,7 +14,7 @@ Aims of this tutorial:
 - scraping a website for (grayzone) exotic animal trading
 
 
-_Note: this tutorial assumes that you the packages `rvest` and `RSelenium` installed._
+_Note: this tutorial assumes that you have the packages `rvest` and `RSelenium` installed._
 
 
 ## Task 1: Extracting the free text details information for missing persons

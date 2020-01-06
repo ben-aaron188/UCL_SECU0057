@@ -1,0 +1,539 @@
+---
+title: "Week 3: Text mining I"
+subtitle: "SECU0057"
+author: "Bennett Kleinberg"
+date: "30 Jan 2020"
+output:
+  revealjs::revealjs_presentation:
+    theme: moon
+    highlight: zenburn
+    center: true
+---
+
+##  {data-background="../img/ucl_artwork/ucl-banner-land-darkblue-rgb.png" data-background-size="70%" data-background-position="top" data-background-opacity="1"}
+
+</br>
+
+Applied Data Science
+
+## Week 3: Text mining 1
+
+## Today
+
+- text quantification
+- numerical representations
+
+## 
+
+<img src='../img/internetminute.jpg' >
+
+## Text is everywhere ... 
+
+- Practically all websites
+- Emails
+- Messaging
+- Government reports
+- Laws
+- Police reports
+- Uni coursework
+- Newspapers
+
+## ... and everything is text 
+
+- videos --> transcripts
+- music --> lyrics
+- conversations --> transcripts
+- speeches --> transcripts
+
+## Core idea
+
+Text is a unique documentation of human activity.
+
+_We are obsessed with documenting._
+
+
+## Text example
+
+How would you analyse the text?
+
+##
+
+## Challenge of quantification
+
+- text is not a numerical representation
+- compare this to trading data, crime statistics, etc.
+- text is just that, "a text"
+- but: for quantitative analyses, we need numbers
+
+Text --> numerical representation?
+
+## Example
+
+  > All I ever wanted was to love women, and in turn to be loved by them back. Their behavior towards me has only earned my hatred, and rightfully so! I am the true victim in all of this. I am the good guy. Humanity struck at me first by condemning me to experience so much suffering. I didn’t ask for this. I didn’t want this. I didn’t start this war. I wasn’t the one who struck first. But I will finish it by striking back. I will punish everyone. And it will be beautiful. Finally, at long last, I can show the world my true worth.
+
+
+## Features of text data
+
+- meta dimension
+- syntactic dimension
+- semantic dimension
+- text metrics
+
+## Meta dimension
+
+- no. of words
+- no. of sentences
+
+## Syntactic dimension
+
+- word frequencies
+- verbs, nouns, persons, locations, ..
+- structure of a sentence
+
+## Semantic dimension
+
+- sentiment
+- psycholinguistic features
+
+## Text metrics
+
+- readability
+- lexical diversity
+
+
+## The `quanteda` package
+
+```{r message=F}
+library(quanteda)
+```
+
+- [quanteda: Quantitative Analysis of Textual Data](https://quanteda.io/)
+    - documentation
+    - tutorials
+    - examples
+
+
+## Levels of text data
+
+- characters `c('h', 'a', 't', 'r', 'e', 'd')`
+- words `hatred`
+- sentences `I didn’t ask for this.`
+- documents: individual text files
+- corpora: collection of documents
+
+```{r echo=F}
+er = "All I ever wanted was to love women, and in turn to be loved by them back. Their behavior towards me has only earned my hatred, and rightfully so! I am the true victim in all of this. I am the good guy. Humanity struck at me first by condemning me to experience so much suffering. I didn’t ask for this. I didn’t want this. I didn’t start this war. I wasn’t the one who struck first. But I will finish it by striking back. I will punish everyone. And it will be beautiful. Finally, at long last, I can show the world my true worth."
+```
+
+## Counting meta features in R
+
+| text level| R function  |
+|----------:|------------:|
+| characters| `nchar()`|
+| words| `quanteda::ntoken()`|
+| sentences| `quanteda::nsentence()`|
+
+## R examples
+
+```{r}
+#sentences
+no_of_sentences = nsentence(er)
+no_of_sentences
+
+#words 1
+no_of_words_1 = ntoken(er)
+no_of_words_1
+
+#words 2
+no_of_words_2 = ntype(er)
+no_of_words_2
+```
+
+## Type-toke ratio
+
+Note: often used metric for "lexical diversity" is the TTR (type-token ratio).
+
+```{r}
+string_a = "I didn’t ask for this. I didn’t want this."
+string_b = "But I will finish it by striking back."
+```
+
+**What are the type-token ratios of each string?**
+
+## Type-token ratio
+
+```{r}
+ntype(string_a)/ntoken(string_a)
+```
+
+```{r}
+ntype(string_b)/ntoken(string_b)
+```
+
+## Characters per word
+
+```{r}
+nchar(er)/ntoken(er)
+```
+
+## Words per sentence
+
+```{r}
+ntoken(er)/nsentence(er)
+```
+
+##
+
+### Text representation
+
+## Aim
+
+- representing a text by its tokens (terms)
+- each text consists of a frequency of its tokens
+
+```{r eval=F}
+"I think I believe him"
+```
+
+## Text representation by hand
+
+
+1. create a column for each token
+2. count the frequency
+
+## 
+
+| text_id| I | think | believe | him |
+|-------:|-------:|-------:|-------:|-------:|
+| text1| 2 | 1 | 1 | 1 |
+
+## Term frequency
+
+- frequency of each token in each document
+- represented in a table (matrix)
+- tokens are features of a document
+- voilá: fancy name --> **Document Feature Matrix (= DFM)**
+
+```{r}
+example_string_tok = tokens("I think I believe him")
+```
+
+## DFM in `quanteda`
+
+- from 'tokens' object, create a DFM table
+
+```{r}
+dfm(example_string_tok)
+```
+
+## Sparsity
+
+Sparsity = % of zero-cells
+
+- Why is sparsity = 0% here?
+- What would you expect if we take additional documents, and why?
+
+
+## DFM with multiple documents
+
+```{r}
+multiple_docs_tok = tokens(c("I think I believe him", "This is a cool function"))
+```
+
+```{r}
+dfm(multiple_docs_tok)
+```
+
+
+## DFM with two lone-actors
+
+
+  > All I ever wanted was to love women, and in turn to be loved by them back. Their behavior towards me has only earned my hatred, and rightfully so! I am the true victim in all of this. I am the good guy. Humanity struck at me first by condemning me to experience so much suffering. I didn’t ask for this. I didn’t want this. I didn’t start this war. I wasn’t the one who struck first. But I will finish it by striking back. I will punish everyone. And it will be beautiful. Finally, at long last, I can show the world my true worth.
+
+## DFM with two texts
+
+```{r echo=F}
+ub = "The Industrial Revolution and its consequences have been a disaster for the human race. They have greatly increased the life-expectancy of those of us who live in “advanced” countries, but they have destabilized society, have made life unfulfilling, have subjected human beings to indignities, have led to widespread psychological suffering (in the Third World to physical suffering as well) and have inflicted severe damage on the natural world. The continued development of technology will worsen the situation."
+```
+
+  > The Industrial Revolution and its consequences have been a disaster for the human race. They have greatly increased the life-expectancy of those of us who live in “advanced” countries, but they have destabilized society, have made life unfulfilling, have subjected human beings to indignities, have led to widespread psychological suffering (in the Third World to physical suffering as well) and have inflicted severe damage on the natural world. The continued development of technology will worsen the situation.
+
+## Using the corpus method
+
+- Create a "mini corpus" for convenience
+- makes using the quanteda pipeline easier
+
+```{r}
+mini_corpus = corpus(c(er, ub))
+summary(mini_corpus)
+```
+
+## DFM representation
+
+```{r}
+corpus_tokenised = tokens(mini_corpus)
+corpus_dfm = dfm(corpus_tokenised)
+```
+
+```{r echo=F}
+knitr::kable(corpus_dfm[, 1:8])
+```
+
+##
+
+```{r echo=F}
+knitr::kable(corpus_dfm[, 31:38])
+```
+
+**Is this ideal?**
+
+## What are the most frequent "terms"?
+
+```{r}
+topfeatures(corpus_dfm[1])
+```
+
+```{r}
+topfeatures(corpus_dfm[2])
+```
+
+## [Zipf's Law](https://www.youtube.com/watch?v=fCn8zs912OE)
+
+<img src='../img/zipfslaw.png' >
+
+## Word hierarchies 
+
+- some words add more meaning than others
+- stopwords = meaningless (?)
+- in any case: too frequent words, don't tell much about the documents
+- ideally: we want to get an _importance score_ for each word
+
+## Word importance
+
+```{r echo=F}
+knitr::kable(corpus_dfm[, 10:15])
+```
+
+We want to "reward" words that are:
+
+- important locally (for individual documents)
+- but not 'inflated' globally (for the whole corpus)
+
+## Metric for word importance
+
+
+1. Term frequency
+
+$tf(t, d) = \frac{\#_t}{nwords_d}$
+
+## Counts
+
+```{r echo=F}
+knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'count'), 3)[, 10:15])
+```
+
+## Term frequencies
+
+```{r echo=F}
+knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'prop'), 3)[, 10:15])
+```
+
+## Double-check the formula
+
+$tf(t, d) = \frac{\#_t}{nwords_d}$
+
+```{r}
+3/ntoken(mini_corpus[1])
+```
+
+Term frequency: _reward for words that occur often in a document_
+
+## Problem
+
+Some words just occur a lot anyway (e.g. "stopwords").
+
+Global occurrence: document frequency
+
+```{r echo=F}
+knitr::kable(docfreq(corpus_dfm, scheme = 'count')[10:15])
+```
+
+$df(t) = #\ of\ documents\ with\ t$
+
+## DF
+
+```{r}
+{x = 1:50
+plot(x, ylim=c(-5, max(x)), type='l', col='blue', lwd=2.5, ylab="")
+legend(5, 45, legend=c("DF"), col=c("blue"), lty=c(1), cex=0.8)}
+```
+
+
+## Correcting for term inflation
+
+- we want: low values for common words
+- and: higher values for _important_ words
+
+Trick: _inverse_ document-frequency
+
+## Inverse DF (IDF)
+
+$df(t) = #\ of\ documents\ with\ t$
+
+$idf(t) = \frac{N}{df(t)}$
+
+## IDF
+
+```{r}
+{x = 1:50
+plot(x, ylim=c(-5, max(x)), type='l', col='blue', lwd=2.5, ylab="")
+lines(max(x)/x, col='red', lty=2, lwd=2)
+legend(5, 45, legend=c("DF", "N/DF"), col=c("blue", "red"), lty=c(1,2), cex=0.8)}
+```
+
+## Problem?
+
+- What happens if $N$ becomes really large?
+
+## Log IDF
+
+- to avoid extreme values, we use the logarithm
+- simple transformation: $idf(t) = log(\frac{N}{df(t)+1})$
+
+## Log IDF
+
+```{r}
+{x = 1:50
+plot(x, ylim=c(-5, max(x)), type='l', col='blue', lwd=2.5, ylab="")
+lines(max(x)/x, col='red', lty=2, lwd=2)
+lines(log(max(x)/(x+1)), col='green', lty=1, lwd=3)
+legend(5, 45, legend=c("DF", "N/DF", "log(N/(DF+1)"), col=c("blue", "red", 'green'), lty=c(1,2,1), cex=0.8)}
+```
+
+
+## Combining term frequency and document frequency
+
+1. Local importance (TF)
+
+```{r echo=F}
+knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'prop'), 3)[, 10:12])
+```
+
+2. Correct for global occurrences (DF)
+
+```{r echo=F}
+knitr::kable(docfreq(corpus_dfm, scheme = 'inverse', k = 1)[10:12])
+```
+
+## TF/IDF
+
+```{r eval=F}
+#text1: "and"
+0.024/-0.1760913
+
+#text2: "and"
+0.023/-0.1760913
+```
+
+
+## TF-IDF
+
+<img src='../img/tfidf_albon.png' >
+
+<small>[Img reference](https://chrisalbon.com/machine_learning/preprocessing_text/tf-idf/)</small>
+
+
+##
+
+### Working witg text as data
+
+## Researcher's degrees of freedom
+
+- stopword removal
+- stemming
+
+## Stopword removal
+
+- We know many words are "low in meaning"
+- so-called stopwords
+
+```{r echo=F}
+knitr::kable(stopwords()[c(1:5, 20:25)])
+```
+
+You could decide to remove these.
+
+## Without stopword removal
+
+
+```{r echo=F}
+knitr::kable(corpus_dfm[, 1:8])
+```
+
+
+## With stopword removal
+
+```{r echo=F}
+corpus_dfm_sw_removed = dfm(corpus_tokenised, remove = stopwords())
+knitr::kable(corpus_dfm_sw_removed[, 1:8])
+```
+
+## Stemming
+
+- some words originate from the same "stem"
+- e.g. "love", "loved", "loving", "lovely"
+- but you might want to reduce all these to the stem
+
+## Word stems
+
+```{r}
+love_stem = c("love", "loved", "loving", "lovely")
+```
+
+
+```{r echo=F}
+love_stem_tok = tokens(love_stem)
+knitr::kable(dfm(love_stem_tok))
+```
+
+## After stemming
+
+```{r echo=F}
+knitr::kable(dfm(love_stem_tok, stem = T))
+```
+
+## Our mini corpus
+
+Incl. stopwords and without stemming:
+
+```{r echo=F}
+knitr::kable(corpus_dfm[, 1:8])
+```
+
+## ... to 
+
+Without stopwords and stemmed:
+
+```{r echo=F}
+corpus_dfm_sw_removed_stemmed = dfm(corpus_tokenised, remove = stopwords(), stem = T)
+knitr::kable(corpus_dfm_sw_removed_stemmed[, 1:8])
+```
+
+
+## Considerations with text data
+
+- a lot of assumptions
+- text == behaviour?
+- produced text == displayed text?
+- many decisions in your hand
+    - stemming
+    - stopwords
+    - custom dictionary
+
+## What's next?
+
+- Today's tutorial: analysing speeches by US presidents, examining UK rap lyrics
+- Homework: quanteda practice, text preprocessing
+
+
+Next week: Text Mining 2
