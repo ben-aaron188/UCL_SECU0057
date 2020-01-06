@@ -92,7 +92,7 @@ Here we will simplify Zipf's Law to $freq_w \propto \frac{1}{rank_w}$, with $w$ 
 
 For a research project related to a [study of UK drill music](https://arxiv.org/pdf/1911.01324.pdf), we have collated a dataset of UK rap music (non-drill). 
 
-You can access the dataset from: [](). Download it to the folder where this tutorial file is located and the read the `.RData` file into your R workspace through the command below (uncomment and run):
+You can access the dataset from: [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/uk_rap_corpus.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/uk_rap_corpus.RData). Download it to the folder where this tutorial file is located and the read the `.RData` file into your R workspace through the command below (uncomment and run):
 
 ```{r}
 #load('uk_rap_corpus.RData')
