@@ -1,0 +1,107 @@
+---
+title: "Tutorial, Week 4: Text mining 2"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "6 Feb 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- extracting n-grams
+- applying sentence-based sentiment analysis
+- using sentiment trajectories to understand speeches and vlogs
+
+_Note: this tutorial assumes that you have installed the packages `spacyr` and `syuzhet`._
+
+
+## Task 1: n-gram in different domains
+
+In the lecture, we covered how n-grams are an extension of simple n=1 tokens. Use the functionalities covered in this week's and previous lectures to obtain the bi-grams and tri-grams for three different corpora: **the inaugural speeches corpus**, **the UK rap music corpus** and **the Guardian corpus you built in week 1**.
+
+What are the most common bi-grams (and tri-grams) for each of the three corpora?
+
+```{r}
+#Your code comes here
+```
+
+To avoid an inflation of the matrices due to "low-meaning" words, exclude the stopwords and then weigh the bi-grams and tri-grams according to the TFIDF method.
+
+Which bi-gram (and tri-gram) has the highest average TFIDF value in each corpus? (_Hint: to calculate the average for the columns of a whole dataframe, have a look at the `apply` function._)
+
+```{r}
+#Your code here
+```
+
+
+## Task 2: Sentence-based sentiment analysis of the Guardian
+
+In Nov 2017, the allegations around the Weinstein sexual harassment case were among the top topics in the media. We retrieved the Guardian coverage on the keyword "weinstein" for Nov. 2017. Load the data.frame in `weinstein_guardian.RData` from [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/weinstein_guardian.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/weinstein_guardian.RData).
+
+```{r}
+#replace the placeholder
+#load("XYZ.RData")
+```
+
+You now have a data.frame called `request.weinstein` in your R work space.
+
+
+Using the above corpus, apply the sentence-based sentiment extraction method from the [`sentimentr`](https://github.com/trinker/sentimentr) package. 
+
+Choose 2 articles and plot the sentiment by sentence across the whole article.
+
+```{r}
+#Your code here
+```
+
+
+## Task 3: Sentiment trajectories
+
+The lecture introduced you to the sentiment trajectory approach. This method can uncover dynamics within a text that static approaches cannot. 
+
+Use the functions of the repository [here](https://github.com/ben-aaron188/naive_context_sentiment) and extract the discrete-cosine-transformed sentiment trajectories for:
+
+- the inaugural speeches and
+- vlogs transcript corpus [available here](https://github.com/ben-aaron188/UCL_SECU0050/blob/master/data/vlogs_corpus.RData)
+
+Answer the questions below:
+
+1. How does the sentiment trajectory of Donald Trump's inauguration speech differ from the first one from Barack Obama?
+2. Of the two YouTubers in the corpus - Casey Neistat and Milo Yiannopoulos - who has on average more positive parts in his videos? (_Hint: here you need to average the standardised vectors for each YouTuber_)
+
+```{r}
+#Your code here
+```
+
+
+---
+
+## Homework
+
+### Part 1: Sentiment trajectories continued
+
+The trajectory extraction function put control over several parameters in your hands. Use a few samples of data (e.g. of the corpora above) and pllay around with the following function parameters of the `ncs_full` function:
+
+- low_pass_filter_size
+- transform_values
+- cluster_lower
+- cluster_upper
+- bins
+
+What does this tell you about these parameters? Can you infer the function of each?
+
+
+### Part 2: Keyword-in-context analysis with the `quanteda` package
+
+There might be cases where you are interested in the context in which specific words occur. The `quanteda` package offers a way of doing this kind of keywords-in-context (KWIC) analysis.
+
+- Replicate the minimal example on the [documentation page](https://quanteda.io/reference/kwic.html)
+- Use the KWIC analysis to examine for two articles of the Guardian corpus in which context the word "Weinstein" was used.
+
+
+### Part 3: Next steps for your project
+
+We are approaching mid-term for this module. You should now have a good idea about the kind of data you want to use for the project. Using your previous ideas and revisions of these, start with the data collection if you have not done so yet.
+
+---

@@ -1,0 +1,649 @@
+---
+title: "Week 4: Text mining 2"
+subtitle: "SECU0057"
+author: "Bennett Kleinberg"
+date: "6 Feb 2020"
+output:
+  revealjs::revealjs_presentation:
+    theme: moon
+    highlight: zenburn
+    center: true
+---
+
+##  {data-background="../img/ucl_artwork/ucl-banner-land-darkblue-rgb.png" data-background-size="70%" data-background-position="top" data-background-opacity="1"}
+
+</br>
+
+Applied Data Science
+
+```{r echo=F, message=F}
+library(quanteda)
+```
+
+
+## Week 4: Text mining 2
+
+## Today
+
+- ngrams
+- sentiment analysis
+- trajectory analysis
+
+##
+
+### What is TFIDF?
+
+## Problem?
+
+```{r echo=F}
+extract = 'It is a great time to be alive'
+extract
+```
+
+## So far...
+
+- we used tokens as unit of analysis
+- but: sometimes multiple tokens might reveal more
+
+
+
+## n-grams
+
+= sequences of _n_ tokens
+
+- unigrams: n = 1
+- bigrams: n = 2
+- trigrams: n = 3
+
+
+## n-grams with quanteda
+
+```{r eval=F}
+dfm(x = text
+    , ngrams = 1
+    , verbose = F
+    , remove_punct = T
+    , stem = F
+    )
+```
+
+
+## Unigrams
+
+```{r echo=F}
+ngrams_extract_1 = dfm(x = extract
+                       , ngrams = 1
+                       , verbose = F
+                       , remove_punct = T
+                       , stem = F
+                       )
+ngrams_extract_1
+```
+
+## Bigrams
+
+`ngrams = 2`
+
+```{r echo=F}
+ngrams_extract_2 = dfm(x = extract
+                       , ngrams = 2
+                       , verbose = F
+                       , remove_punct = T
+                       , stem = F
+                       )
+ngrams_extract_2
+```
+
+## Trigrams
+
+`ngrams = 3`
+
+```{r echo=F}
+ngrams_extract_3 = dfm(x = extract
+                       , ngrams = 3
+                       , verbose = F
+                       , remove_punct = T
+                       , stem = F
+                       )
+ngrams_extract_3
+```
+
+
+## 
+
+### What happens when we increase _n_?
+
+## n-grams on a corpus
+
+```{r}
+unigrams = dfm(x = data_corpus_inaugural[1:3]
+               , ngrams = 1
+               )
+```
+
+##
+
+```{r echo=F, message=F}
+knitr::kable(unigrams[1:3, 1:5])
+```
+
+## With preprocessing
+
+```{r}
+unigrams = dfm(x = data_corpus_inaugural[1:3]
+               , ngrams = 1
+               , stem = T
+               , remove = stopwords()
+               , remove_punct = T
+               )
+```
+
+##
+
+```{r echo=F, message=F}
+knitr::kable(unigrams[1:3, 1:5])
+```
+
+
+## Bigrams
+
+```{r}
+bigrams = dfm(x = data_corpus_inaugural[1:3]
+                      , ngrams = 2
+                      , stem = T
+                      , remove = stopwords()
+                      , remove_punct = T
+                      )
+```
+
+##
+
+```{r echo=F, message=F}
+knitr::kable(bigrams[1:3, 1:5])
+```
+
+## 
+
+What happens when we increase _n_?
+
+##
+
+```{r}
+dim(unigrams)
+```
+
+```{r}
+dim(bigrams)
+```
+
+## Problem?
+
+- essentially we're back at where we started
+- same old problem with ~word~ ngram importance
+
+##
+
+```{r eval=F}
+dfm_tfidf(bigrams
+          , scheme_tf = 'prop'
+          , scheme_df = 'inverse'
+          , k = 1)
+```
+
+##
+
+```{r echo=F}
+knitr::kable(round(dfm_tfidf(bigrams
+                             , scheme_tf = 'prop'
+                             , scheme_df = 'inverse'
+                             , k=1)
+                   , 6)[1:3, 1:5])
+```
+
+## Multiple n n-grams
+
+```{r eval=F}
+dfm(x = text
+    , ngrams = 1:3
+    , verbose = F
+    , remove_punct = T
+    , stem = F
+    )
+```
+
+
+## _n_-grams
+
+- generalisation of "single" tokens
+- often used in [bag-of-word models](https://www.datacamp.com/courses/intro-to-text-mining-bag-of-words)
+- common in predictive modelling (Week 7: machine learning 1)
+
+## 
+
+
+
+##
+
+### Sentiment analysis
+
+## Sentiment analysis: aim
+
+- measure positive/negative tone
+- "emotionality" of a text
+- builds on the "cognition -> language" nexus
+
+## Basic sentiment analysis
+
+1. tokenise text
+2. construct a lexicon of sentiment words
+3. judge the sentiment words
+4. match tokens with sentiment lexicon
+
+Example: YouTube vlog transcripts
+
+## 1. tokenise text
+
+```{r echo=F}
+load('/Users/bennettkleinberg/GitHub/UCL_SECU0050/data/vlogs_data_with_text.RData')
+load('/Users/bennettkleinberg/GitHub/UCL_SECU0050/data/vlogs_corpus.RData')
+```
+
+```{r echo=F}
+tokens(vlogs_corpus[1])
+```
+
+
+## 2. lexicon of sentiment words
+
+- do all words have a potential sentiment?
+- maybe focus on adjectives/adverbs, maybe verbs?
+
+Lucky us: many sentiment lexicons exists
+
+## 2. lexicon of sentiment words
+
+The `lexicon` [package](https://github.com/trinker/lexicon)
+
+```{r echo=F}
+head(lexicon::hash_sentiment_nrc, 10)
+```
+
+## lexicon::hash_sentiment_nrc
+
+```{r echo=F}
+head(lexicon::hash_sentiment_slangsd[, 1], 10)
+```
+
+## lexicon::hash_sentiment_socal_google
+
+```{r}
+head(lexicon::hash_sentiment_socal_google[,1], 10)
+```
+
+## 3. judge the sentiment words
+
+Normal strategy
+
+- crowdsourced annotation
+- decide on a judgment scale
+- multiple judgments per word
+- assess inter-rater reliability
+
+## 3. judge the sentiment words
+
+Again: mostly already done for you
+
+```{r}
+head(lexicon::hash_sentiment_nrc, 10)
+```
+
+Binary judgment: -1 or 1
+
+## Scale judgments
+
+```{r}
+head(lexicon::hash_sentiment_slangsd, 10)
+```
+
+Finer judgment: -1.00, -0.50, 0.50, 1.00
+
+## Continuous judgment
+
+```{r}
+head(lexicon::hash_sentiment_socal_google, 10)
+```
+
+
+## 4. match tokens with sentiment lexicon
+
+- Classic approach: one sentiment score [(`syuzhet` package)](https://github.com/mjockers/syuzhet)
+
+```{r echo=F}
+example_text = 'An author of many childrens was devastated when she found out that she had colon cancer. She entered the third phase of her cancer. It was especially terrifying because her husband passed away from lung cancer after receiving chemotherapy. She opted not to take the same path I was exposed to. However after six months the cancer was spread to the lungs and entered the fourth stage.'
+```
+
+> [...] was devastated when she found out that she had colon cancer. She entered the third phase of her cancer. It was especially terrifying because her husband passed away from lung cancer after receiving chemotherapy. [...]
+
+## 4. match tokens with sentiment lexicon
+
+Classic approach: one sentiment score
+
+```{r}
+syuzhet::get_sentiment(example_text)
+```
+
+Strategy: match words from sentiment lexicon, then calculate a document average.
+
+## Problem?
+
+
+## 4. match tokens with sentiment lexicon
+
+- Newer approach: sentiment for each sentence
+
+The `sentimentr` [(Rinker)](https://github.com/trinker/sentimentr) package
+
+```{r}
+sentimentr::sentiment(example_text)
+```
+
+## 4. match tokens with sentiment lexicon
+
+- Newer approach: sentiment for each sentence
+    - needs punctuated data
+    - requires good sentence disambiguation
+    - without punctuation: whole string = 1 sentence
+- What about valence shifters?
+    
+This is not ideal.
+
+## Sentiment trajectory analysis
+
+Papers: [vlogs](https://arxiv.org/pdf/1808.09722.pdf), [news channels](https://www.aclweb.org/anthology/W19-2110.pdf), [drill lyrics](https://arxiv.org/pdf/1911.01324.pdf)
+
+Idea:
+- sentiment is dynamic within texts
+- static approaches mask sentiment dynamics
+- worst case: sentiment completely off
+
+<small>Inspired by Matthew Jockers' [work](http://www.matthewjockers.net/2015/02/02/syuzhet/)
+</small>
+
+##
+
+<img src='../img/ltta1.png'>
+
+##
+
+<img src='../img/ltta2.png'>
+
+## Sentiment trajectories
+
+1. Parse text input into words
+2. Match sentiment lexicon to each word
+    - Match valence shifters to each context 
+        - Apply valence shifter weights
+        - Build a naïve context around the sentiment
+	      - Return modified sentiment
+	      
+<!-- 3. Length-standardise sentiment vector -->
+
+## Sentiment trajectory analysis
+
+Package from: `https://github.com/ben-aaron188/naive_context_sentiment`
+
+```{r echo=F, message=F}
+source('/Users/bennettkleinberg/GitHub/naive_context_sentiment/ncs.R')
+```
+
+```{r echo=F, message=F}
+library(stringr)
+library(data.table)
+mod_string = str_replace_all(example_text, "[.,;:!?]", "")
+mod_string = tolower(mod_string)
+mod_string = unlist(str_split(mod_string, " "))
+mod_string = mod_string[nchar(mod_string) > 0]
+
+#transform to data table
+text.raw = data.table(text = mod_string
+                      , index = 1:length(mod_string))
+
+knitr::kable(text.raw[25:35,])
+```
+
+## Match sentiment
+
+```{r echo=F}
+hash.sentiment = lexicon::hash_sentiment_jockers_rinker
+hash.valence_shifters = lexicon::hash_valence_shifters
+
+#locate sentiments
+text.sentiment = merge(text.raw
+                       , hash.sentiment
+                       , by.x = 'text'
+                       , by.y = 'x'
+                       , all.x = TRUE)
+text.sentiment = text.sentiment[order(index),]
+
+knitr::kable(text.sentiment[25:35,])
+
+```
+
+## Match valence shifters
+
+```{r echo=F}
+#locate valence shifters
+text.valence_shifters = merge(text.sentiment
+                              , hash.valence_shifters
+                              , by.x = 'text'
+                              , by.y = 'x'
+                              , all.x = TRUE)
+text.valence_shifters = text.valence_shifters[order(index),]
+
+text.table = text.valence_shifters
+
+knitr::kable(text.table[25:35,])
+```
+
+## Valence shifters
+
+- 1 = negator (not, never, …):-1.00
+- 2 = amplifier (very, totally, …): 1.50
+- 3 = deamplifier (hardly, barely, …): 0.50
+- 4 = adversative conjunction (but, however, …): 0.25
+
+## Apply valence shifter weights
+
+```{r echo=F}
+cluster_lower_ = 2
+cluster_upper_ = 2
+weight_negator_ = -1
+weight_amplifier_ = 1.5
+weight_deamplifier_ = 0.5
+weight_advcon_ = 0.25
+names(text.table)[3:4] = c('sentiment'
+                           , 'valence'
+)
+
+#key to valence shifters:
+#1 = negator
+#2 = amplifier
+#3 = deamplifier
+#4 = adversative conjunction
+text.table$weights = ifelse(is.na(text.table$valence), 1,
+                            ifelse(text.table$valence == 1, weight_negator_,
+                                   ifelse(text.table$valence == 2, weight_amplifier_,
+                                          ifelse(text.table$valence == 3, weight_deamplifier_,
+                                                 weight_advcon_))))
+
+text.table$sentiment_score = text.table$sentiment
+text.table$sentiment_score[is.na(text.table$sentiment_score)] = 0
+text.table$sentiment_score_mod = text.table$sentiment_score
+
+knitr::kable(text.table[25:35, 1:5])
+```
+
+## Sentiment trajectories
+
+Build 'naive' context around sentiment
+
+- 2 words around sentiment word
+
+|text       | index| sentiment|valence | weights|
+|:----------|-----:|---------:|:-------|-------:|
+|**was**        |    26|        NA|NA      |     1.0|
+|**especially** |    27|        NA|2       |     1.5|
+|**terrifying** |    28|        -1|NA      |     1.0|
+|**because**    |    29|        NA|NA      |     1.0|
+|**her**        |    30|        NA|NA      |     1.0|
+
+
+## Calculate modified sentiment
+
+```{r echo=F, message=FALSE}
+verbose=T
+for(i in 1:length(text.table$sentiment_score)){
+  if(text.table$sentiment_score[i] != 0){
+    cluster_boundary_lower = ifelse((i-cluster_lower_) > 0, (i-cluster_lower_), 1)
+    cluster_boundary_upper = ifelse((i+cluster_upper_) < length(text.table$sentiment_score), (i+cluster_upper_), length(text.table$sentiment_score))
+    a = text.table$weights[cluster_boundary_lower:cluster_boundary_upper]
+    a[(1+cluster_lower_)] = text.table$sentiment_score[i]
+    text.table$sentiment_score_mod[i] = prod(a, na.rm = T)
+    
+    if(verbose == T){
+      print(paste('sentiment change for "', text.table$text[i], '": ',  text.table$sentiment_score[i], ' --> ', prod(a), sep=""))
+      
+    }
+    
+  }
+}
+```
+
+```{r echo=F}
+knitr::kable(text.table[26:30, c(1,3,4,5,7)])
+```
+
+## Trajectories
+
+```{r echo=F}
+plot(text.table$sentiment_score
+     , type='l'
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , main = 'Raw sentiment (example string)')
+```
+
+## Vlog data
+
+```{r message=F, include=FALSE}
+vlog_traj = ncs_full(txt_input_col = vlogs_with_text$text
+                     , txt_id_col = vlogs_with_text$url
+                     , bin_transform = F)
+vlog_traj_trans = ncs_full(txt_input_col = vlogs_with_text$text
+                     , txt_id_col = vlogs_with_text$url
+                     , bin_transform = T)
+vlog_traj_trans_20 = ncs_full(txt_input_col = vlogs_with_text$text
+                     , txt_id_col = vlogs_with_text$url
+                     , bin_transform = T
+                     , low_pass_filter_size = 20)
+```
+
+```{r echo=F}
+plot(vlog_traj[[1]]
+     , type='h'
+     , col = ifelse(vlog_traj[[1]] > 0, 'blue', ifelse(vlog_traj[[1]] < 0, 'red', 'black'))
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , main = 'Raw sentiment (vlog 1)')
+```
+
+
+##
+
+```{r echo=F}
+plot(vlog_traj[[5]]
+     , type='h'
+     , col = ifelse(vlog_traj[[5]] > 0, 'blue', ifelse(vlog_traj[[5]] < 0, 'red', 'black'))
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , main = 'Raw sentiment (vlog 5)')
+```
+
+## 
+
+```{r echo=F}
+plot(vlog_traj[[99]]
+     , type='h'
+     , col = ifelse(vlog_traj[[99]] > 0, 'blue', ifelse(vlog_traj[[99]] < 0, 'red', 'black'))
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , main = 'Raw sentiment (vlog 99)')
+```
+
+## Problem?
+
+##
+
+## Solution: Length-standardisation
+
+- aim: transform all sentiment values to a vector
+- standard vector length for comparisons
+- here: 100 values with [Discrete Cosine Transformation](https://link.springer.com/referenceworkentry/10.1007%2F0-387-30038-4_61) ([explainer on Fourier Transformation](https://www.youtube.com/watch?v=mkGsMWi_j4Q))
+
+## After Discrete Cosine Transformation
+
+```{r echo=F}
+plot(vlog_traj_trans[[1]]
+     , type='h'
+     , col = ifelse(vlog_traj_trans[[1]] > 0, 'blue', ifelse(vlog_traj_trans[[1]] < 0, 'red', 'black'))
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , xlab = 'Temporal progression %'
+     , main = 'DCT-transformed sentiment (vlog 1)')
+```
+
+##
+
+```{r echo=F}
+plot(vlog_traj_trans[[5]]
+     , type='h'
+     , col = ifelse(vlog_traj_trans[[5]] > 0, 'blue', ifelse(vlog_traj_trans[[5]] < 0, 'red', 'black'))
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , xlab = 'Temporal progression %'
+     , main = 'DCT-transformed sentiment (vlog 5)')
+```
+
+##
+
+```{r echo=F}
+plot(vlog_traj_trans[[99]]
+     , type='h'
+     , col = ifelse(vlog_traj_trans[[99]] > 0, 'blue', ifelse(vlog_traj_trans[[99]] < 0, 'red', 'black'))
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , xlab = 'Temporal progression %'
+     , main = 'DCT-transformed sentiment (vlog 99)')
+```
+
+
+## Beware of the "filter" size
+
+```{r echo=F}
+plot(vlog_traj_trans_20[[1]]
+     , type='h'
+     , col = ifelse(vlog_traj_trans_20[[1]] > 0, 'blue', ifelse(vlog_traj_trans_20[[1]] < 0, 'red', 'black'))
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , xlab = 'Temporal progression %'
+     , main = 'DCT-transformed sentiment (filter size 20) (vlog 1)')
+```
+
+
+## What's next?
+
+- Today's tutorial: ngrams, POS tagging, sentiment analysis, trajectory analysis
+- Homework: KWIC analysis, trajectory parameters
+
+
+Next week: Text Mining 3
