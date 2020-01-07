@@ -160,6 +160,5 @@ The R package {`quanteda`}(https://quanteda.io/index.html) is a powerful toolbox
 Please ensure that you have installed and can load the following R packages:
 
 - syuzhet
-- spacyr
 
 ---
