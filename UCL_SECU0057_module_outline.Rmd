@@ -197,14 +197,14 @@ Please ensure that you follow the guides below to setup your computer with the n
     - Mikolov, T., Sutskever, I., Chen, K., Corrado, G., & Dean, J. (2013). Distributed Representations of Words and Phrases and their Compositionality. ArXiv:1310.4546 [Cs, Stat]. [http://arxiv.org/abs/1310.4546](http://arxiv.org/abs/1310.4546)
     - Vector dot products from [https://www.khanacademy.org/math/linear-algebra/vectors-and-spaces/dot-cross-products/v/vector-dot-product-and-vector-length](https://www.khanacademy.org/math/linear-algebra/vectors-and-spaces/dot-cross-products/v/vector-dot-product-and-vector-length)
     - Matrix vector products from [https://www.khanacademy.org/math/linear-algebra/vectors-and-spaces/null-column-space/v/matrix-vector-products](https://www.khanacademy.org/math/linear-algebra/vectors-and-spaces/null-column-space/v/matrix-vector-products)
-    - Garg, N., Schiebinger, L., Jurafsky, D., & Zou, J. (2018). Word embeddings quantify 100 years of gender and ethnic stereotypes. Proceedings of the National Academy of Sciences, 115(16), E3635–E3644. [https://doi.org/10.1073/pnas.1720347115](https://doi.org/10.1073/pnas.1720347115)
     - [Limitations of word embeddings, Burdick, 2019](https://github.com/maximilianmozes/word_embeddings_workshop_resources/blob/master/slides/limitations.pdf)
     - Wendlandt, L., Kummerfeld, J. K., & Mihalcea, R. (2018). Factors Influencing the Surprising Instability of Word Embeddings. Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers), 2092–2102. [https://doi.org/10.18653/v1/N18-1190](https://doi.org/10.18653/v1/N18-1190)
 - Recommended:
+    - Garg, N., Schiebinger, L., Jurafsky, D., & Zou, J. (2018). Word embeddings quantify 100 years of gender and ethnic stereotypes. Proceedings of the National Academy of Sciences, 115(16), E3635–E3644. [https://doi.org/10.1073/pnas.1720347115](https://doi.org/10.1073/pnas.1720347115)
     - Bolukbasi, T., Chang, K.-W., Zou, J., Saligrama, V., & Kalai, A. (2016). Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings. ArXiv:1607.06520 [Cs, Stat]. [http://arxiv.org/abs/1607.06520](http://arxiv.org/abs/1607.06520)
     - Vylomova, E., Rimell, L., Cohn, T., & Baldwin, T. (2016). Take and Took, Gaggle and Goose, Book and Read: Evaluating the Utility of Vector Differences for Lexical Relation Learning. ArXiv:1509.01692 [Cs]. [http://arxiv.org/abs/1509.01692](http://arxiv.org/abs/1509.01692)
-- Slides: [Week 5: Text mining 3]()
-- Tutorial + Homework: [Tutorial, week 5: Text mining 3]()
+- Slides: [Week 5: Text mining 3](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_5/week5_secu0057.html)
+- Tutorial + Homework: [Tutorial, week 5: Text mining 3](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_5/week5_tutorial_secu0057.nb.html)
 
 ### Week 6 - Reading week
 
