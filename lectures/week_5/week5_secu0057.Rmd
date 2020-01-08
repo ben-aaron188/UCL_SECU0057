@@ -1,0 +1,558 @@
+---
+title: "Week 5: Text mining 3"
+subtitle: "SECU0057"
+author: "Bennett Kleinberg"
+date: "13 Feb 2020"
+output:
+  revealjs::revealjs_presentation:
+    theme: moon
+    highlight: zenburn
+    center: true
+---
+
+##  {data-background="../img/ucl_artwork/ucl-banner-land-darkblue-rgb.png" data-background-size="70%" data-background-position="top" data-background-opacity="1"}
+
+</br>
+
+Applied Data Science
+
+```{r include=FALSE}
+library(stringdist)
+library(quanteda)
+```
+
+
+## Week 5: Text mining 3
+
+
+## Today
+
+- text similarity
+- intro to word embeddings
+
+
+##
+
+What makes two strings similar?
+
+
+## Factors in similarity
+
+- lexical similarity
+- phonetic similarity
+- semantic similarity
+
+Underlying challenge: **quantification**
+
+## String similarity
+
+- Levenshtein distance
+- Damerau-Levenshtein distance
+- q-gram distances
+
+_Aim: numerical measure of distance_
+
+## 
+
+```{r}
+string_a = 'crime'
+string_b = 'criminal'
+```
+
+How much do these two differ?
+
+
+## Levenshtein's approach
+
+Distance between $A$ and $B$:
+
+1. change $A$ to obtain $B$
+2. allowed edits: 
+    - substituting characters
+    - adding characters
+
+## Lev('crime', 'criminal')
+
+1. crim~e~**i**
+2. crimi**n**
+3. crimin**a**
+4. crimina**l**
+
+4 edits are required to change 'crime' into 'criminal'.
+
+## In R
+
+```{r}
+library(stringdist)
+
+stringdist(a = 'crime'
+           , b = 'criminal'
+           , method = 'lv')
+```
+
+$Lev_{(crime, criminal)}  = 4$
+
+## Your turn
+
+Pair 1:
+
+- A = "london"
+- B = "amsterdam"
+
+Pair 2:
+
+- C = "london"
+- D = "condom"
+
+
+## 
+
+```{r}
+stringdist(a = 'london'
+           , b = 'amsterdam'
+           , method = 'lv')
+```
+
+
+##
+
+```{r}
+stringdist(a = 'london'
+           , b = 'condom'
+           , method = 'lv')
+```
+
+
+## Converting distances to similarity
+
+1. calculate distance $dist$ (e.g. $Lev_{(crime, criminal)}  = 4$)
+2. calculate maximum distance $\max dist$
+3. obtain quotient of $\frac{dist}{\max dist}$
+4. substract quotion from 1: $sim = 1 - \frac{dist}{\max dist}$
+
+## Distance to similarity
+
+1. $Lev_{(crime, criminal)}  = 4$
+2. $\max Lev_{(crime, criminal)}  = 8$
+3. $\frac{Lev_{(crime, criminal)}}{\max Lev_{(crime, criminal)}} = \frac {4}{8}$
+4. $1 - \frac{Lev_{(crime, criminal)}}{\max Lev_{(crime, criminal)}}$
+
+$1 - \frac{4}{8} = 0.5$
+
+
+## Using `stringsim(...)`
+
+```{r}
+stringsim(a = 'crime'
+           , b = 'criminal'
+           , method = 'lv')
+```
+
+## q-grams
+
+- essentially: n-grams on character-level
+
+```{r}
+qgrams('crime', 'criminal', q = 2)
+```
+
+## Setting q
+
+Note that $q$ is anaolgous to $n$ in n-grams:
+
+```{r}
+qgrams('crime', 'criminal', q = 3)
+```
+
+## q-grams for string distance
+
+Simple approach: absolute difference
+
+```{r}
+stringdist(a = 'crime'
+           , b = 'criminal'
+           , method = 'qgram'
+           , q = 3)
+```
+
+
+## Distances between vectors
+
+Suppose we have got two vectors:
+
+- $\vec{v_1} = [1, 2]$
+- $\vec{v_2} = [4, 3]$
+
+##
+
+```{r echo=FALSE}
+{plot(c(1,4),c(2,3)
+     , xlim=c(0,5)
+     , ylim=c(0,5)
+     , pch=19
+     , col=c('red', 'blue')
+     , ylab='Dim Y'
+     , xlab = 'Dim X'
+     , panel.first = grid()
+     , main = 'Vectors [1,2] and [4,3]')
+arrows(0,0,4,3, lwd=2, col='blue')
+arrows(0,0,1,2, lwd=2, col='red')}
+```
+
+## Euclidean distance
+
+Uses Pytharogean theorem.
+
+For two two-dimensional locations:
+
+- build a right triangle
+- use $a^2 = b^2 + c^2$ to calculate the length of the hypothenuse $c$
+
+##
+
+```{r echo=F}
+{plot(c(1,4),c(2,3)
+     , xlim=c(0,5)
+     , ylim=c(0,5)
+     , pch=19
+     , col=c('red', 'blue')
+     , ylab='Dim Y'
+     , xlab = 'Dim X'
+     , panel.first = grid()
+     , main = 'Vectors [1,2] and [4,3]')
+arrows(0,0,4,3, lwd=2, col='blue')
+arrows(0,0,1,2, lwd=2, col='red')
+segments(1,2,4,2, lty=2)
+segments(4,2,4,3, lty=2)
+segments(1,2,4,3, lty=1, lwd=2, col='orange')
+}
+```
+
+## By hand:
+
+- $a = x_2 - x_1 = 4 - 1 = 3$
+- $b = y_2 - y_1 = 3 - 2 = 1$
+- $c^2 = a^2 + b^2$
+
+Thus:
+
+$c = \sqrt{a^2 + b^2} = \sqrt{9 + 1} = 3.16$
+
+
+## Euclidean distance in 3 dimensions
+
+$dist(A, B) = \sqrt{(A_1 - B_1)^2 + (A_2 - B_2)^2 + (A_3 - B_3)^2}$
+
+## On the q-grams
+
+```{r}
+qgrams('london', 'condom', q = 2)
+```
+
+## Vectors V1 and V2
+
+```{r}
+matrix_1 = matrix(data = c(c(1,2,1,0,1,0),c(0,1,1,1,1,1))
+                  , nrow = 2, byrow = T)
+
+dist(matrix_1, method = 'euclidean')
+```
+
+## Euclidean distance and magnitude
+
+- takes into account the magnitude of vectors
+- but this is not always meaningful
+- different metric: _cosine_ distance
+
+## Cosine distance
+
+```{r echo=FALSE}
+{plot(c(1,4,0,6),c(2,3,2,3)
+     , xlim=c(0,6)
+     , ylim=c(0,4)
+     , pch=19
+     , col=c('red', 'blue', 'green', 'pink')
+     , ylab='Dim Y'
+     , xlab = 'Dim X'
+     , panel.first = grid()
+     , main = 'Cosine distance: about the angles')
+arrows(0,0,4,3, lwd=2, col='blue')
+arrows(0,0,1,2, lwd=2, col='red')
+arrows(0,0,0,2, lwd=2, col='green')
+arrows(0,0,6,3, lwd=2, col='pink')}
+```
+
+## Cosine similarity
+
+$csim = \frac{A \times B}{\sqrt{A \times A} * \sqrt{B \times B}}$
+
+_Note: $A \times B$ is the dot product of the vector. 
+
+## In R
+
+
+```{r}
+V1 = c(4,2,3)
+V2 = c(1,3,1)
+
+cossim = function(A, B){
+  numerator = sum(A*B)
+  denominator = sqrt(sum(A*A))*sqrt(sum(B*B))
+  cosine_sim = numerator/denominator
+  return(cosine_sim)
+}
+
+cossim(V1, V2)
+```
+
+## Cosine similarity on q-grams
+
+```{r}
+qgrams('london', 'condom', q = 2)
+```
+
+```{r}
+stringsim('london', 'condom', q = 2, method = 'cosine')
+```
+
+## Similarity of phrases
+
+```{r}
+phrase_1 = "I think numbers are great"
+phrase_2 = "Numbers are useless"
+
+stringsim(phrase_1, phrase_2, q=3, method = 'cosine')
+```
+
+## Problems with lexical similarity?
+
+## Consider these
+
+```{r eval=F}
+[sand, beach]
+[water, sea]
+[bank, money]
+[euro, dollar]
+```
+
+
+## What about the semantic dimension?
+
+- lexical dimension doable
+- But what about the meaning of words?
+- "sand" and "beach" are close to one another
+- ... but lexical metrics fail to uncover this
+
+## Semantic similarity
+
+If a method can do this, then we expect:
+
+- $cossim(sand, beach) < cossim(bleach, beach)$
+- $cossim(euro, dollar) < cossim(neuro, euro)$
+
+## Word embeddings
+
+- meaning of words determined by information associated with it
+- computationally: we express each word as a vector
+- that vector contains the information associated with the word
+
+Does that work? When?
+
+## Vectors are everywhere
+
+"these are word embeddings"
+
+```{r message=F, echo=F}
+corpus_a = corpus(c('these', 'are', 'word', 'embeddings'))
+dfm_1 = dfm(data_corpus_inaugural[10:12], ngrams=1)
+dfm_2 = dfm(corpus_a, ngrams=1)
+#knitr::kable(dfm_1[1:3, 20:30])
+knitr::kable(dfm_2)
+```
+
+Every word is a vector (called: **a one-hot vector**)
+
+## Every document is a vector
+
+```{r message=F, echo=F}
+knitr::kable(dfm_1[1:3, 20:30])
+```
+
+
+## Vector-based word similarity
+
+So can't we just calculate the vector similarity then? (e.g. cosine similarity)
+
+Ideas?
+
+## Problem of sparsity
+
+Remember: dot products!
+
+Dot product of two one-hot vector is always zero.
+
+## Embedding a vector
+
+- we want a denser representation of each word
+- two approaches:
+    - word2vec: $P(word|context)$ and $P(context|word)$
+    - glove: corpus co-occurrences
+    - Details available [here](https://github.com/maximilianmozes/word_embeddings_workshop_resources/blob/master/slides/theo.pdf)
+
+## Embeddings: aim
+
+From high-dimensional vector space to lower dimensional space.
+
+E.g. from a one-hot vector of size 10,000 to an embeddeding of size 300.
+
+## Properties of word embeddings
+
+- we have an embedding of each word
+- that captures some kind of "context"
+- each embedding in a given model has the same length
+
+
+## Using word embeddings
+
+- no need to build the embeddings
+- typically we use pre-trained models (e.g. from Google, Facebook)
+- e.g. [Word vectors for 157 languages](https://fasttext.cc/docs/en/crawl-vectors.html) and the [Glove embeddings](https://nlp.stanford.edu/projects/glove/)
+- we can then retrieve the embeddings for a given word
+
+## In R
+
+_Note: heavy on your RAM (loads massive file into memory)_
+
+1. initialising pre-trained models
+2. calculating similarity between terms
+
+Code: [https://github.com/ben-aaron188/r_helper_functions/blob/master/init_glove.R](https://github.com/ben-aaron188/r_helper_functions/blob/master/init_glove.R)
+
+
+## Our expectations (1)
+
+$cossim(sand, beach) < cossim(bleach, beach)$
+
+```{r eval=F}
+sand_emb = as.vector(glove.pt[row.names(glove.pt) == 'sand', ])
+beach_emb = as.vector(glove.pt[row.names(glove.pt) == 'beach', ])
+bleach_emb = as.vector(glove.pt[row.names(glove.pt) == 'bleach', ])
+```
+
+##
+
+```{r eval=F}
+cossim(sand_emb, beach_emb)
+
+#[1] 0.5469368
+```
+
+
+```{r eval=F}
+cossim(beach_emb, bleach_emb)
+
+#[1] -0.0501422
+```
+
+
+## Our expectations (2)
+
+$cossim(euro, dollar) < cossim(neuro, euro)$
+
+```{r eval=F}
+euro_emb = as.vector(glove.pt[row.names(glove.pt) == 'euro', ])
+dollar_emb = as.vector(glove.pt[row.names(glove.pt) == 'dollar', ])
+neuro_emb = as.vector(glove.pt[row.names(glove.pt) == 'neuro', ])
+```
+
+##
+
+```{r eval=F}
+cossim(euro_emb, dollar_emb)
+#[1] 0.7328042
+
+cossim(euro_emb, neuro_emb)
+#[1] -0.08723018
+```
+
+
+## Arithmetics with word embeddings
+
+What if we could do maths with meaning?
+
+Do semantic relationships hold true in embeddings?
+
+## BERLIN - GERMANY + FRANCE
+
+If: $\vec{BERLIN} \approx BERLIN$
+
+$\frac{\vec{GERMANY}}{\vec{BERLIN}} :: \frac{\vec{FRANCE}}{\vec{?}}$
+
+
+```{r eval=F}
+berlin = as.vector(glove.pt[row.names(glove.pt) == 'berlin', ])
+germany = as.vector(glove.pt[row.names(glove.pt) == 'germany', ])
+france = as.vector(glove.pt[row.names(glove.pt) == 'france', ])
+```
+
+##
+
+```{r eval=F}
+mystery_1 = berlin - germany + france
+
+  [1]  0.5129700 -0.7331210 -0.1134250  0.4532580  0.5920800  0.5046900
+  [7]  0.1716500  0.6980830  0.0461335  0.2364360 -0.2775940 -0.0869580
+ [13] -0.2696400  0.1602300 -0.9382800  0.3996800  0.1305250 -0.6906400
+ [19] -0.6324500 -0.3029900  0.2935000  0.1269000 -0.1562700 -1.1325400
+ [25]  ...
+```
+
+
+## Clostest neighbours to the mystery vector?
+
+```{r eval=F}
+head(sort(cos_sim_vals[,1], decreasing = TRUE), 10)
+ 
+ mystery_1      paris     france     french prohertrib     berlin   brussels 
+ 1.0000000  0.8827144  0.7558026  0.7075165  0.6943174  0.6665562  0.6574431 
+      lyon     london         le 
+ 0.6526201  0.6407975  0.6403628
+```
+
+## KING - MAN + WOMAN
+
+$\frac{\vec{MAN}}{\vec{KING}} :: \frac{\vec{WOMAN}}{\vec{?}}$
+
+```{r eval=F}
+head(sort(cos_sim_vals[,2], decreasing = TRUE), 10)
+ 
+  mystery_2      king     queen   monarch    throne  daughter    prince  princess 
+1.0000000 0.8551837 0.7834414 0.6933802 0.6833110 0.6809082 0.6713142 0.6644083 
+   mother elizabeth 
+0.6579325 0.6563301 
+```
+
+## Why does this work?
+
+Possible explanation: **the distributional hypothesis** (Harris, 1954)
+
+_Words in that occur in the same context have the same meaning._
+
+
+## Cautionary note
+
+Word embeddings are very powerful, but:
+
+- [instable](https://www.aclweb.org/anthology/N18-1190.pdf)
+- numerically meaningless
+- [Limitations of word embeddings, Burdick (2019)](https://github.com/maximilianmozes/word_embeddings_workshop_resources/blob/master/slides/limitations.pdf)
+
+(see the required reading for today)
+
+
+## What's next?
+
+- Today's tutorial: text similarity, word embeddings
+- Homework: more word embeddings, custom functions
+
+Next week: reading week (then: Machine Learning 1)

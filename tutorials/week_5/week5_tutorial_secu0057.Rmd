@@ -1,0 +1,159 @@
+---
+title: "Tutorial, Week 5: Text mining 3"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "13 Feb 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- assessing the similarity of your own written coursework
+- loading and working with word embeddings in R
+
+_Note: this tutorial assumes that you have installed the `stingdist` package and have downloaded the glove pretrained models._
+
+## Task 1: Text similarity and ngrams on your own coursework
+
+Take a collection of your coursework in your study programme so far (or other coursework you handed in). Read the files into R and create a corpus object from it.
+
+```{r}
+#Your code comes here
+```
+
+Use the data you have loaded to answer the following three questions:
+
+1. Which unigram and which bigram did you use the most often in the whole corpus?
+
+```{r}
+#Your code comes here
+```
+
+2. Of all documents, extract the first 50 words. Which documents have the greatest similarity on these first 50 words? Use the Levenshtein distance.
+
+```{r}
+#Your code comes here
+```
+
+3. Now that the last 20 words of each document and calculate the Euclidean-based similarity for all documents using q-grams with $q = 2$. Which two documents have the highest similarity? _(Hint: you can best use a matrix to calculate similarity for all vectors at once)_
+
+```{r}
+#Your code comes here
+```
+
+4.  Does the cosine similarity confirm the finding from (3)?
+
+```{r}
+#Your code comes here
+```
+
+## Task 2: Word embeddings with Glove in R
+
+Word embeddings are among the most interesting developments in NLP in the past decade. Using them in R is relatively easy once you have done the setup right. The tricky part is the computationally heavy load of the pre-trained models (we do not cover custom training or re-training of our own models in this module).
+
+We ran a tutorial on word embeddings at a computational social science workshop. Use this tutorial to start with word embeddings in R.
+
+- Tutorial: [https://raw.githack.com/maximilianmozes/word_embeddings_workshop_resources/master/code/R/glove_in_R.html](https://raw.githack.com/maximilianmozes/word_embeddings_workshop_resources/master/code/R/glove_in_R.html) - you can do that tutorial in the dedicated file.
+
+Once you have done this, use the `init_glove(...)` function to load different models with different dimensions. 
+
+_Note: the bigger the model and the higher the dimensions, the bigger the file you will load into your computer's memory. Too big files will slow done your machine. If you have an 8 GB memory, you should be fine in using the 6B models (with all dimensions) and the 2B Twitter model. Do not use the 42B or higher models unless you have got at least 16 GB RAM._
+
+Do the vector similarities for the following words differ if you load different models?
+
+- crime
+- machine
+- girl
+- lecture
+
+
+```{r}
+#Your code comes here
+```
+
+Do these findings surprise you?
+
+## Task 3: Using word embeddings
+
+Use the word embeddings you loaded in Task 3 and answer these questions with the appropriate arithmetic operations:
+
+- Which embedding is closer to "LONDON": "WESTMINSTER" or "ENGLAND"?
+- What is the closest neighbour to the vector retrieved by calculating: "WOMAN" + "DOCTOR" - "MAN"? What did you expect?
+- In the Twitter pre-trained model, which concept is closest in the vector space to "SUCCESS"?
+
+```{r}
+#Your code comes here
+```
+
+
+## Task 4: (advanced) train word embeddings on your own mini-corpus
+
+_This task is related to and an extension of the homework Part 1 below._
+
+Remember how we used pre-trained models so far? You can train your own models which might be a good option if you are interested in a more localised language phenomenon. A major downside is of course the size of the corpora used for training. Common sizes used in the provided pre-trained models are 840 billion documents, for example.
+
+For now, collate a mini-corpus of texts that you have written. Create a `corpus` object.
+
+```{r}
+#Your code here
+```
+
+
+Now you can use that corpus to construct a co-occurrence matrix and embed the resulting vectors. To do this, follow the steps in the [quanteda text2vec](https://quanteda.io/articles/pkgdown/replication/text2vec.html) tutorial.
+
+
+```{r}
+#Your code here
+```
+
+
+In your coursework corpus, which word is the closest in cosine similarity to the word "crime"?
+
+
+```{r}
+#Your code here
+```
+
+---
+
+## Homework
+
+### Part 1: text2vec in quanteda
+
+The package quanteda also contains some functionality that can be used to work with word embeddings. Replicate the tutorial below and add some word arithmetics on your own.
+
+Tutorial link: [Quanteda text2vec](https://quanteda.io/articles/pkgdown/replication/text2vec.html)
+
+
+### Part 2: Practising custom functions in R
+
+For your data science skillset it is essential that you become comfortable writing your own functions. We have walked through a few examples in the lectures so far. 
+
+Now: write a function that returns the Euclidean distance of two vectors represented in a 5-dimensional space. Call that function `euclidean_5_dim`.
+
+
+```{r}
+#Your code here
+```
+
+Test your function with the two vectors below:
+
+```{r}
+vector_1 = c(3, 5, 1, 65, 900)
+vector_2 = c(13, 1, 5, 7, 340)
+```
+
+
+### Part 3: Next steps for your project
+
+Over the reading week, you will have some time to think in more detail about your project. After the reading week, you are asked to hand in your concept draft. Start working on the parts that you are already clear about.
+
+### Part 4: Packages for the next session
+
+Install the following packages:
+
+- caret
+- pROC
+
+---

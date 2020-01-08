@@ -16,7 +16,7 @@ output:
 
 Applied Data Science
 
-```{r echo=F, message=F}
+```{r message=F, include=FALSE}
 library(quanteda)
 ```
 

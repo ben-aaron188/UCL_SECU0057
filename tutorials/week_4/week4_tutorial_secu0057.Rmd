@@ -104,4 +104,8 @@ There might be cases where you are interested in the context in which specific w
 
 We are approaching mid-term for this module. You should now have a good idea about the kind of data you want to use for the project. Using your previous ideas and revisions of these, start with the data collection if you have not done so yet.
 
+### Part 4: Packages and downloads for next week
+
+- Install the `stringdist` package
+- Download the pre-trained word vectors from: [https://nlp.stanford.edu/projects/glove/](https://nlp.stanford.edu/projects/glove/) (download at least the glove.6B.zip file and unzip it into a folder on your computer called "glove")
 ---
