@@ -1,0 +1,170 @@
+---
+title: "Tutorial, Week 7: Machine learning 1"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "27 Feb 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- applying supervised learning for vlogger identification
+- extracting features from text
+- running full text classification tasks in R
+
+
+_Note: this tutorial assumes that you have installed the `caret` package._
+
+## Task 1: Identifying vloggers based on vlog transcripts
+
+Retrieve the dataframe stored in the RData file 'vlogs_unigrams' from [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_unigrams.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_unigrams.RData). This dataset contains features extracted from the transcripts of two YouTube vloggers (have a look at the column 'vlogger_name'). 
+
+Specifically, the features are counts unigrams (already sparsity-corrected). Your task is to use machine learning to investigate whether the vlogger can be identified through the use of specific unigrams in their vlogs.
+
+Use the following settings:
+
+- train/test split: 0.6
+- 10-fold cross-validation
+- Linear SVM classification algorithm
+
+Questions:
+
+- What is the overall accuracy?
+- Is the model better for one of the two YouTubers?
+- What is the area under the curve of your model on the test set?
+
+
+```{r}
+#your code comes here
+```
+
+
+Now re-run the classification and use the settings below:
+
+- train/test split: 0.8
+- 5-fold cross-validation
+- repeated cross-validation 10 times (Hint: have a look at 5.3 Basic Parameter Tuning in [https://topepo.github.io/caret/model-training-and-tuning.html](https://topepo.github.io/caret/model-training-and-tuning.html))
+- Linear SVM classification algorithm
+
+Questions:
+
+- What is the overall accuracy?
+- Is the model better for one of the two YouTubers?
+- What is the area under the curve of your model on the test set?
+
+```{r}
+#your code comes here
+```
+
+
+## Task 2: Extracting features from raw text data
+
+The next step to proper text classification is that you extract features from the raw text data. You can access the raw vlog transcripts at [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_corpus_large.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_corpus_large.RData). The file is called `vlogs_corpus_large.RData` and loads a corpus object called `vlogs_corpus_large`, which contains the raw vlogs of the two YouTubers you ran the classification task on above.
+
+Your task now is to extract features yourself so you can prepare the data for supervised classification.
+
+
+1. Extract the bigrams and trigrams from the vlog transcripts.
+
+```{r}
+#Your code
+```
+
+
+2. Apply a sparsity correction to reduce the zero counts.
+
+```{r}
+#Your code
+```
+
+
+3. What are the Top 10 most used bigrams of each vlogger?
+
+```{r}
+#Your code
+```
+
+
+4. Store the bigrams in a dataframe that you can use for text classification. Name that dataframe as `vlogs_bigrams`
+
+```{r}
+#Your code
+```
+
+
+
+## Task 3: Full text classification tasks 
+
+The pipeline from text to classification involves both the feature extraction as well as the modelling of the relationship between an outcome and some features.
+
+For this task we ask you to use the raw corpus above and retrieve the following features:
+
+- TFIDF-weighted unigrams and bigrams
+- an average sentiment score
+- the Coleman-Liau readability
+
+```{r}
+#Your code
+```
+
+
+Answer these questions:
+
+1. Do the two vloggers differ in the average sentiment of their vlogs? Determine this numerically and also plot the data.
+
+```{r}
+#Your code
+```
+
+
+2. Whose vlog has the highest readability?
+
+```{r}
+#Your code
+```
+
+
+3. What are the F1 scores and the AUCs for classification tasks with (i) the TFIDF-weighted unigrams, (ii) the TFIDF-weighted bigrams, (iii) the TFIDF-weighted unigrams, bigrams, sentiment and readability combined? Use classification settings of your choice.
+
+```{r}
+#Your code
+```
+
+
+
+---
+
+## Homework
+
+### Part 1: Sentiment classification of movie reviews
+
+To practice further with machine learning classification, download the commonly used IMDB movie reviews dataset from [https://ai.stanford.edu/~amaas/data/sentiment/](https://ai.stanford.edu/~amaas/data/sentiment/). This dataset contains 25k pos/neg reviews for training and another 25k pos/neg reviews for testing.
+
+Once you have downloaded the data (raw text files of the reviews), read these into an R dataframe and run text classification on it. You are free to choose which feature sets, algorithm and meta settings you want to use. Evaluate your model(s) on the test set file.
+
+Hint: in order to read the single files into a dataframe in R efficiently and quickly, you can use the `txt_df_from_dir` function available on GutHub at [https://github.com/ben-aaron188/r_helper_functions/blob/master/txt_df_from_dir.R](https://github.com/ben-aaron188/r_helper_functions/blob/master/txt_df_from_dir.R). You will need to do this for positive and negative reviews separately, attach an outcome column to each and the combine them with `rbind`.
+
+```{r}
+#Your code
+```
+
+
+
+### Part 2: Read about loss functions
+
+Statistical modelling inherently contains some optimisation (e.g. to find the best parameters for a line that fits the data). The optimisation works because we use specific functions to minimise some metric. In machine learning, this is often referred to as the loss function. The brief series of articles below gives you a good overview to grasp the basics of loss functions for machine learning.
+
+- [Loss functions 1](https://towardsdatascience.com/optimization-of-supervised-learning-loss-function-under-the-hood-df1791391c82)
+- [Loss functions 2](https://towardsdatascience.com/optimization-loss-function-under-the-hood-part-ii-d20a239cde11)
+- [Loss functions 3](https://towardsdatascience.com/optimization-loss-function-under-the-hood-part-iii-5dff33fa015d)
+
+
+### Part 3: Packages for the next session
+
+Install the following packages:
+
+- factoextra
+- cluster
+
+---

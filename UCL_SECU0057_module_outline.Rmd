@@ -220,9 +220,11 @@ _Use this week to catch up on any literature or homework/tutorials._
     - [Deisenroth et al., 2019: C12 Classification with Support Vector Machines](https://mml-book.github.io/book/mml-book.pdf)
     - [Kuhn, 2019: C5 Model training](https://topepo.github.io/caret/model-training-and-tuning.html)
     - [Kuhn, 2019: C17 Measuring performance](https://topepo.github.io/caret/measuring-performance.html)
-- Slides
-- Tutorial
-- Homework
+- Recommended:
+    - [YT, 3Blue1Brown: Bayes theorem, and making probability intuitive](https://www.youtube.com/watch?v=HZGCoVF3YvM)
+- Slides: [Week 7: Machine Learning 1]()
+- Tutorial + Homework: [Tutorial, week 7: Machine Learning 1]()
+
 
 ### Week 8 - Machine learning II (5 Mar)
 

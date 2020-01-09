@@ -1,0 +1,664 @@
+---
+title: "Week 7: Machine Learning 1"
+subtitle: "SECU0057"
+author: "Bennett Kleinberg"
+date: "27 Feb 2020"
+output:
+  revealjs::revealjs_presentation:
+    theme: moon
+    highlight: zenburn
+    center: true
+---
+
+##  {data-background="../img/ucl_artwork/ucl-banner-land-darkblue-rgb.png" data-background-size="70%" data-background-position="top" data-background-opacity="1"}
+
+</br>
+
+Applied Data Science
+
+```{r include=FALSE}
+library(caret)
+library(pROC)
+```
+
+
+## Week 7: Machine Learning 1
+
+## Machine learning?
+
+- core idea: a system learns from experience
+- no precise instructions
+
+
+## Today
+
+- supervised learning
+- performance metrics
+
+## Supervised learning
+
+- who is the supervisor?
+- supervised = labelled data
+- i.e. you know the outcome
+- flipped logic
+
+## Simulated data
+
+```{r echo=F}
+set.seed(123457)
+data1 = data.frame(account = rep(c('bot', 'real'), each=10)
+                   , tweet_freq = round(c(rnorm(10, 35, 5), rnorm(10, 25, 10)), 4))
+```
+
+```{r echo=F}
+knitr::kable(data1[c(1:4, 11:14),], col.names = c('account', 'tweet_freq'), row.names = F)
+```
+
+## How to best separate the data into two groups?
+
+```{r echo=F}
+set.seed(12)
+data2 = data1[sample(1:20, 20), ]
+{plot(data2$tweet_freq, col=data2$account
+      , pch=19
+      , ylab="Tweets/day")
+  legend(5, 8, legend=c("real", "bot"), col=c("red", "black"), pch=19, cex=0.8)}
+```
+
+
+## Core idea
+
+- learn relationship between
+    - outcome (target) variable
+    - features (predictors)
+- "learning" is done through an algorithm
+    - simplest algorithm: `if A then B`
+
+## Idea 1: mean thresholds
+
+```{r echo=F}
+{plot(data1$tweet_freq, col=data1$account
+      , pch=19
+      , ylab="Tweets/day"
+      , main="Minimum bot tweet frequency threshold")
+  abline(h=min(data1$tweet_freq[data1$account == 'bot']), col='black', lty=2)
+  legend(5, 8, legend=c("real", "bot"), col=c("red", "black"), pch=19, cex=0.8)}
+```
+
+## Higher dimensional data
+
+```{r}
+set.seed(123457)
+data2 = data.frame(account = rep(c('bot', 'real'), each=100)
+                   , tweet_freq = round(c(rnorm(100, 35, 5), rnorm(100, 25, 10)), 0)
+                   , following = round(c(rnorm(100, 3000, 150), rnorm(100, 2800, 150)), 0))
+data3 = data2
+plot(data2$tweet_freq, data2$following, col=data2$account
+     , pch=19
+     , xlab = 'Tweets/day'
+     , ylab = 'Following')
+```
+
+## Idea 2: hand-crafted rules
+
+```{r echo=F}
+plot(data2$tweet_freq, data2$following, col=data2$account
+     , pch=19
+     , xlab = 'Tweets/day'
+     , ylab = 'Following')
+abline(h = min(data2$following[data2$account == 'bot']), col='black', lwd=2, lty=2)
+abline(v = min(data2$tweet_freq[data2$account == 'bot']), col='black', lwd=2, lty=2)
+```
+
+## 
+
+```{r}
+plot(data2$tweet_freq, data2$following, col=data2$account
+     , pch=19
+     , xlab = 'Tweets/day'
+     , ylab = 'Following'
+     , main = 'Hand-crafted rule-based data separation')
+segments(min(data2$tweet_freq[data2$account == 'bot'])
+         , min(data2$following[data2$account == 'bot'])
+         , min(data2$tweet_freq[data2$account == 'bot'])
+         , 4000, col='orange', lwd=2, lty=1)
+segments(min(data2$tweet_freq[data2$account == 'bot'])
+         , min(data2$following[data2$account == 'bot'])
+         , 50
+         , min(data2$following[data2$account == 'bot'])
+         , col='orange', lwd=2, lty=1)
+```
+
+## But this is not learning
+
+- often we have no idea about the relationships
+- too many predictors
+- too diverse a problem
+- simply unknown
+
+
+## Stepwise supervised ML
+
+- clarify what `outcome` and `features` are
+- determine which classification algorithm to use
+- train the model
+
+
+## Classes of supervised learning
+
+- classification (e.g. death/alive, fake/real)
+- regression (e.g. income, number of deaths)
+
+## Core aim of supervised learning
+
+_Learning_ from data to **make predictions** about the future.
+
+## `caret` in practice
+
+```{r}
+my_first_model = glm(account ~ .
+                       , data = data2
+                       , family = 'binomial'
+                       )
+```
+
+We have trained a model.
+
+= you have taught an algorithm to learn to predict real vs bot accounts based on followers and tweet frequency
+
+##
+
+<img src='../img/meme2.jpg'>
+
+
+## Explanatory vs predictive modelling
+
+- this is where you would stop in explanatory modelling
+- e.g. interpreting the coefficients
+- predictive modelling focuses on the use of that model
+
+
+## Putting your model to use
+
+```{r}
+data2$model_predictions = predict(my_first_model, data2, type = 'response')
+data2$model_1 = ifelse(data2$model_predictions >= .5, 'real', 'bot')
+```
+
+```{r echo=F}
+data2$model_1_col = ifelse(data2$model_1 == 'bot', 'black', 'red')
+knitr::kable(table(data2$account, data2$model_1))
+```
+
+##
+
+```{r echo=F}
+plot(data2$tweet_freq, data2$following
+     , col=data2$model_1_col
+     , xlab = 'Tweets/day'
+     , ylab = 'Following'
+     , main="Algorithm-predicted account type"
+     , pch=19)
+```
+
+
+##
+
+### The key challenge?
+
+Think about what we did
+
+## Problem of inductive bias
+
+- remember: we learn from the data
+- but what we really want to know is: how does it work on "unseen" data
+- this is needed to estimate how good real predictions would be
+
+How to solve this?
+
+## Splitting the data
+
+
+- split the data (e.g. 80%/20%, 60%/40%)
+- use one part as TRAINING SET
+- use the other as TEST SET
+
+## Enter: `caret`
+
+```{r eval=F}
+library(caret)
+```
+
+- excellent package for ML in R
+- well-documented [website](https://topepo.github.io/caret/index.html)
+- common interface for [200+ models](https://topepo.github.io/caret/available-models.html)
+
+## `caret`: data partitioning
+
+```{r}
+set.seed(1)
+in_training = createDataPartition(y = data3$account
+                                  , p = .8
+                                  , list = FALSE
+                                  )
+```
+
+## Creating a training and test set
+
+```{r}
+training_data = data3[ in_training,]
+test_data = data3[-in_training,]
+```
+
+
+## Supervised ML steps revised
+
+- define outcome
+- define features
+- build model on the TRAINING SET
+- evaluate model on the TEST SET
+    
+    
+## Building an SVM model
+
+```{r}
+my_second_model = train(account ~ .
+                       , data = training_data
+                       , method = "svmLinear"
+                       )
+```
+
+## Fit/test the SVM:
+
+```{r}
+model_predictions = predict(my_second_model, test_data)
+```
+
+```{r echo=F}
+knitr::kable(table(test_data$account, model_predictions))
+```
+
+## But!
+
+- our model might be really dependent on the training data
+- we want to be more careful
+
+Can we do some kind of safeguarding in the training data?
+
+## Cross-validation
+
+K-fold cross-validation
+
+<img src='../img/kfold_cv.png'>
+
+<small>[img source](https://my.oschina.net/Bettyty/blog/751627)</small>
+
+## Specifying CV in `caret`
+
+```{r}
+training_controls = trainControl(method="cv"
+                                 , number = 4
+                                 , classProbs = TRUE
+                                 )
+
+my_third_model = train(account ~ .
+                       , data = training_data
+                       , trControl = training_controls
+                       , method = "svmLinear"
+                       )
+```
+
+##
+
+```{r}
+my_third_model
+```
+
+## Assess the CVed model
+
+```{r}
+model_predictions = predict(my_third_model, test_data)
+```
+
+```{r echo=F}
+knitr::kable(table(test_data$account, model_predictions))
+```
+
+
+##
+
+### Performance metrics
+
+## Suppose we have two models
+
+```{r echo=F}
+set.seed(3)
+bot_data = data.frame(account = rep(c('bot', 'real'), each=1000)
+                   , tweet_freq = round(c(rnorm(100, 30, 5), rnorm(100, 25, 10)), 0)
+                   , following = round(c(rnorm(100, 3000, 150), rnorm(100, 2800, 150)), 0))
+in_training = createDataPartition(y = bot_data$account
+                                  , p = .8
+                                  , list = FALSE
+                                  )
+training_data = bot_data[ in_training,]
+test_data = bot_data[-in_training,]
+```
+
+
+```{r}
+svm_model = train(account ~ .
+                  , data = training_data
+                  , trControl = training_controls
+                  , method = "svmLinear"
+                  )
+
+nb_model = train(account ~ .
+                  , data = training_data
+                  , trControl = training_controls
+                  , method = "nb"
+                  )
+```
+
+## Test set results
+
+```{r echo=F}
+svm_pred = predict(svm_model, test_data)
+nb_pred = predict(nb_model, test_data)
+```
+
+```{r echo=F}
+knitr::kable(table(test_data$account, svm_pred), caption = 'SVM model')
+```
+```{r}
+knitr::kable(table(test_data$account, nb_pred), caption = 'NB model')
+```
+
+## The confusion matrix
+
+|            |    Bot|    Real|
+|:------|-------:|-------:|
+|Bot   | True positives | False negatives | 
+|Real   | False positives | True negatives |
+
+
+## False (true) positives (negatives)
+
+- true positives (TP): correctly identified bots
+- true negatives (TN): correctly identified real accounts
+- false positives (FP): false accusations
+- false negatives (FN): missed bots
+
+## Most intuitive: accuracy
+
+$acc=\frac{(TP+TN)}{N}$
+
+$acc_{svm}=\frac{(111+86)}{400} = 0.49$
+
+$acc_{nb}=\frac{(124+60)}{400} = 0.47$
+
+Any problems with that?
+
+## Accuracy
+
+```{r echo=F}
+m1 = array(c(100, 5, 100, 195), dim=c(2,2))
+dimnames(m1) = list(reality = c('Bot', 'Real')
+                       , prediction = c('Bot', 'Real'))
+knitr::kable(m1, caption = 'Model 1')
+```
+
+```{r echo=F}
+m2 = array(c(150, 55, 50, 145), dim=c(2,2))
+dimnames(m2) = list(reality = c('Bot', 'Real')
+                       , prediction = c('Bot', 'Real'))
+knitr::kable(m2, caption = 'Model 2')
+```
+
+## Problem with accuracy
+
+- same accuracy, different confusion matrix
+- relies on thresholding idea
+- not suitable for comparing models (don't be fooled by the literature!!)
+
+Needed: more nuanced metrics
+
+
+## Beyond accuracy
+
+```{r echo=F}
+addmargins(m1, c(1,2))
+```
+
+```{r echo=F}
+addmargins(m2, c(1,2))
+```
+
+
+## Precision
+
+i.e. --> how often the prediction is correct when prediction class _X_
+
+Note: we have two classes, so we get _two_ precision values
+
+Formally: 
+
+- $Pr_{bot} = \frac{TP}{(TP+FP)}$
+- $Pr_{real} = \frac{TN}{(TN+FN)}$
+
+
+## Precision
+
+```{r echo=F}
+addmargins(m1, c(1,2))
+```
+
+- $Pr_{bot} = \frac{100}{105} = 0.95$
+- $Pr_{real} = \frac{195}{295} = 0.64$
+
+
+## Comparing the models
+
+|            |       Model 1|       Model 2|
+|:-----------|-------------:|-------------:|
+|$acc$       |          0.74|          0.74|
+|$Pr_{bot}$  |          0.95|          0.73|
+|$Pr_{real}$ |          0.64|          0.74|
+
+## Recall
+
+i.e. --> how many of class _X_ is detected
+
+Note: we have two classes, so we get _two_ recall values
+
+Also called sensitivity and specificity!
+
+Formally: 
+
+- $R_{bot} = \frac{TP}{(TP+FN)}$
+- $R_{real} = \frac{TN}{(TN+FP)}$
+
+## Recall
+
+```{r echo=F}
+addmargins(m1, c(1,2))
+```
+
+- $R_{bot} = \frac{100}{200} = 0.50$
+- $R_{real} = \frac{195}{200} = 0.98$
+
+## Comparing the models
+
+|            |       Model 1|       Model 2|
+|:-----------|-------------:|-------------:|
+|$acc$       |          0.74|          0.74|
+|$Pr_{bot}$  |          0.95|          0.73|
+|$Pr_{real}$ |          0.64|          0.74|
+|$R_{bot}$   |          0.50|          0.75|
+|$R_{real}$  |          0.98|          0.73|
+
+## Combining Pr and R
+
+The _F1_ measure.
+
+Note: we combine Pr and R for each class, so we get _two_ F1 measures.
+
+Formally: 
+
+- $F1_{bot} = 2*\frac{Pr_{bot} * R_{bot}}{Pr_{bot} + R_{bot}}$
+- $F1_{real} = 2*\frac{Pr_{real} * R_{real}}{Pr_{real} + R_{real}}$
+
+## F1 measure
+
+```{r echo=F}
+addmargins(m1, c(1,2))
+```
+
+- $F1_{bot} = 2*\frac{0.95 * 0.50}{0.95 + 0.50} = 2*\frac{0.475}{1.45} = 0.66$
+- $F1_{real} = 2*\frac{0.64 * 0.98}{0.64 + 0.98} = 2*\frac{0.63}{1.62} = 0.77$
+
+## Comparing the models
+
+|            |       Model 1|       Model 2|
+|:-----------|-------------:|-------------:|
+|$acc$       |          0.74|          0.74|
+|$Pr_{bot}$  |          0.95|          0.73|
+|$Pr_{real}$ |          0.64|          0.74|
+|$R_{bot}$   |          0.50|          0.75|
+|$R_{real}$  |          0.98|          0.73|
+|$F1_{bot}$  |          0.66|           ...|
+|$F1_{real}$ |          0.77|           ...|
+
+## In caret
+
+```{r}
+confusionMatrix(nb_pred, as.factor(test_data$account))
+```
+
+## There's more
+
+What's behind the model's predictions?
+
+## Class probabilities
+
+```{r echo=F}
+probs = predict(nb_model, test_data, type = 'prob')[,1]
+pred = nb_pred
+{plot(probs
+     , ylab = 'Class probabilities'
+     , pch=19
+     , ylim = c(0.45, 0.52)
+     , col=pred
+     , panel.first = grid())
+legend(300, 0.46, legend=c("real", "bot"), col=c("red", "black"), pch=19, cex=0.8)}
+```
+
+
+## The threshold problem
+
+```{r echo=F}
+set.seed(123456789)
+probs2_a = c(sample(seq(0.65, 0.99, 0.001), 124, replace=T)
+           , sample(seq(0.35, 0.49, 0.001), 76, replace=T))
+probs2_b = c(sample(seq(0.01, 0.35, 0.001), 140, replace=T)
+           , sample(seq(0.51, 0.65, 0.001), 60, replace=T))
+probs2 = c(sample(probs2_a, 200, F)
+           , sample(probs2_b, 200, F))
+{plot(probs2, col=rep(c('red', 'black'), each=200), main = 'Also class probabilities for acc = 0.46', pch=19)
+abline(h=0.5, lwd=3, lty=3)}
+```
+
+## Issue!
+
+- classification threshold little informative
+- obscures certainty in judgment
+
+Needed: a representation across all possible values
+
+## The Area Under the Curve (AUC)
+
+- plot all observed values (here: class probs)
+- y-axis: sensitivity
+- x-axis: 1-specificity
+
+
+## AUC step-wise
+
+```{r}
+#for each class probability:
+threshold_1 = probs[1]
+threshold_1
+```
+
+```{r}
+pred_threshold_1 = ifelse(probs >= threshold_1, 'bot', 'real')
+```
+
+```{r echo=F}
+knitr::kable(table(test_data$account, pred_threshold_1))
+```
+
+
+## Sensitivity and 1-Specificity
+
+```{r echo=F}
+knitr::kable(table(test_data$account, pred_threshold_1))
+```
+
+$Sens. = 183/200 = 0.92$
+
+$Spec. = 12/200 = 0.06$
+
+##
+
+$Sens. = 183/200 = 0.92$
+
+$Spec. = 12/200 = 0.06$
+
+| Threshold| Sens.| 1-Spec|
+|:---------|-----:|------:|
+| 0.48| 0.92| 0.94|
+
+Do this for every threshold observed.
+
+## Plot the results:
+
+```{r echo=F, message=F}
+library(pROC)
+auc1 = roc(response = test_data$account
+               , predictor = probs
+               , ci=T)
+plot.roc(auc1, legacy.axes = T, xlim=c(1, 0))
+```
+
+## Quantify this plot
+
+```{r}
+auc1 = roc(response = test_data$account
+               , predictor = probs
+               , ci=T)
+auc1
+```
+
+## What if we compare our two models?
+
+```{r echo=F}
+{plot(probs2, col=rep(c('red', 'black'), each=200), main = 'Also class probabilities for acc = 0.46', pch=19)
+abline(h=0.5, lwd=3, lty=3)}
+```
+
+##
+
+```{r}
+auc2 = roc(response = test_data$account
+               , predictor = probs2
+               , ci=T)
+
+plot.roc(auc2, xlim=c(1, 0), legacy.axes = T)
+```
+
+
+## What's next?
+
+- Today's tutorial + homework: text classification, performance metrics
+
+Next week: Machine Learning 2
