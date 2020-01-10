@@ -235,8 +235,8 @@ _Use this week to catch up on any literature or homework/tutorials._
     - [Gatto, 2019: C4 Unsupervised learning](https://lgatto.github.io/IntroMachineLearningWithR/unsupervised-learning.html)
     - Denny, M. J., & Spirling, A. (2018). Text Preprocessing For Unsupervised Learning: Why It Matters, When It Misleads, And What To Do About It. Political Analysis, 26(2), 168–189. [https://doi.org/10.1017/pan.2017.44](https://doi.org/10.1017/pan.2017.44)
     - [Datacamp unsupervised learning](https://www.datacamp.com/courses/unsupervised-learning-in-r)
-- Slides: [Week 8: Machine Learning 2]()
-- Tutorial + Homework: [Tutorial, week 8: Machine Learning 2]()
+- Slides: [Week 8: Machine Learning 2](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_8/week8_secu0057.html)
+- Tutorial + Homework: [Tutorial, week 8: Machine Learning 2](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_8/week8_tutorial_secu0057.nb.html)
 
 
 ### Week 9 - Machine learning III (12 Mar)
