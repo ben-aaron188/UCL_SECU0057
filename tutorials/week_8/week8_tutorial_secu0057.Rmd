@@ -1,0 +1,118 @@
+---
+title: "Tutorial, Week 8: Machine learning 2"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "5 Mar 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- finding stylistic patterns in YouTube vlogs
+- examining content commonalities in missing person details
+- replicating an authorship prediction example
+- finding patterns in your own writing
+
+_Note: this tutorial assumes that you have installed the `cluster` package._
+
+## Task 1: Examining style patterns in the YouTube corpus
+
+For this task, we will use a larger version of the YouTube corpus. Access the corpus from [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_corpus_10k.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_corpus_10k.RData) and load the .RData file called `youtube_corpus_10k.RData` which contains 10,000 raw transripts of YouTube vlogs.
+
+```{r}
+#Your code here
+```
+
+Now use the techniques learned in the past weeks and extract, for each transcript, the readability (choose a metric yourself) and the number of words. Also check whether you might need to exclude some data.
+
+```{r}
+#Your code
+```
+
+Use these two variables with unsupervised machine learning (here: k-means) to assess whether there are underlying patterns in the way in which language (operationalised here through the readability and length of the transcript) is used:
+
+Specifically, follow these steps:
+
+1. plot the data
+2. determine k
+3. build a final k-means model
+4. plot the data with cluster assignment _(Hint: you can get the clusters from the final model object)_
+5. interpret the clusters
+
+Note: should the preliminary analysis not be conclusive about $k$, then you run the model with $k=3$.
+
+```{r}
+#Your code
+```
+
+
+## Task 2: Common topics in FBI missing persons data
+
+Use the data collected in Task 1 of the [tutorial of week 2](https://raw.githack.com/ben-aaron188/UCL_SECU0050/master/tutorials/week_3/week3_tutorial_secu0050.nb.html). The free text details information of the missing person data might give us some indication about commonalities in the descriptions.
+
+Use the techniques from the previous weeks to extract common (here: use a sparsity correciton yourself) unigrams and bigrams from the text fields.
+
+```{r}
+#Your code
+```
+
+Once you have done so, use unsupervised learning to assess whether the use of these frequent unigrams and bigrams is patterned.
+
+```{r}
+#Your code
+```
+
+What do you conclude?
+
+## Task 3: Authorship prediction example
+
+For your final project, you are asked to engage in author attribution. After the data acquisition, you might decide to extract some linguistic features and build machine learning models. 
+
+One (of the various) approaches to do such a project is used in the quanteda tutorial on authorship prediction.
+
+Try to replicate the example from [https://quanteda.io/articles/pkgdown/replication/qss.html](https://quanteda.io/articles/pkgdown/replication/qss.html).
+
+```{r}
+#Your code comes here
+```
+
+
+## Task 4: Finding patterns in your own writing
+
+Now use the mini-corpus of your own coursework that you prepared in the previous weeks. With that corpus, run unsupervised models to examine whether there are patterns in the content and style of your work.
+
+```{r}
+#Your code
+```
+
+
+### (Extra task:) Predicting grades from linguistic style
+
+From the same corpus select those pieces where you know the grade you received. Extract some features that relate to the style of your writing (since the content will depend on the topic) and use supervised modelling to predict the grade.
+
+Note that:
+
+- you will need a decent size of data and should only run this task if you have enough graded coursework
+- the supervised task here differs from binary classification and takes the form of a regression with a numerical outcome (look at standard regression metrics for model evaluation, e.g. MAPE, RMSE).
+
+```{r}
+#Your code
+```
+
+
+---
+
+## Homework
+
+### Part 1: Concept draft for your project
+
+You should now have a good idea about your project and be prepared to submit the concept draft. You will receive feedback from us on that draft. Use the template available [INSERT LINK]() and submit the draft by 9 March 2020 (4pm).
+
+### Part 2: Packages for the next session
+
+Install the following packages:
+
+- (tbc)
+
+---

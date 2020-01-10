@@ -1,0 +1,500 @@
+---
+title: "Week 8: Machine Learning 2"
+subtitle: "SECU0057"
+author: "Bennett Kleinberg"
+date: "5 Mar 2020"
+output:
+  revealjs::revealjs_presentation:
+    theme: moon
+    highlight: zenburn
+    center: true
+---
+
+##  {data-background="../img/ucl_artwork/ucl-banner-land-darkblue-rgb.png" data-background-size="70%" data-background-position="top" data-background-opacity="1"}
+
+</br>
+
+Applied Data Science
+
+```{r include=FALSE}
+library(caret)
+library(cluster)
+```
+
+
+## Week 8: Machine Learning 2
+
+
+## Today
+
+- unsupervised learning
+- core algorithm in detail
+- problems of unsupervised learning
+
+## 
+
+### Unsupervised ML
+
+## Problem for supervised approaches
+
+- most of the time we don't have labelled data
+- sometimes there are no labels at all
+- core idea: finding clusters in the data
+
+## Examples
+
+- grouping of online ads
+- clusters in crime descriptions
+- collections of texts without authors
+
+Practically all interesting problems are unlabelled data problems.
+
+
+## 
+
+```{r echo=F}
+set.seed(123457)
+data2 = data.frame(gender = rep(c('male', 'female'), each=500)
+                   , salary = round(c(rnorm(500, 42000, 4000), rnorm(500, 30000, 6000)), 0)
+                   , height = round(c(rnorm(500, 185, 10), rnorm(500, 168, 5)), 0))
+{plot(data2$salary, data2$height, col=data2$gender, pch=19, xlab='Income', ylab= 'Height in cm')
+  legend("topleft" 
+  , legend = c("Male", "Female")
+  , col = c('red', 'black')
+  , pch = 19)}
+```
+
+## The unsupervised case
+
+```{r echo=F}
+data3 = data2
+data3$salary = scale(data2$salary)
+data3$height = scale(data2$height)
+plot(data3$salary, data3$height, ylim=c(-3, 3), xlim=c(-3,3), pch=19, ylab='Height scaled', xlab='Income scaled')
+data4 = data3[, 2:3]
+```
+
+## Aim
+
+- examining whether there are patterns (e.g. groups in the data)
+- possibly: a 'grouped' underlying data generation process
+- helpful because: reduces dimensions of the data
+
+## How to test whether there are patterns?
+
+1. separate data into a set number of clusters
+2. find the best cluster assignment of observations
+
+Common method: **k-means algorithm**
+
+## 1. Setting _k_
+
+Let's take $k=4$.
+
+```{r}
+unsup_model_1 = kmeans(data4
+                       , centers = 4
+                       , nstart = 10
+                       , iter.max = 10)
+```
+
+## 
+
+```{r echo=F, warning=F, message=F}
+c1 = kmeans(data4, centers = 4, iter.max = 1)
+c2 = kmeans(data4, centers = c1$centers, iter.max = 1)
+
+{plot(data4$salary, data4$height, pch=1, main="Iteration: 1"
+      , ylab='Height scaled', xlab='Income scaled')
+points(c1$centers, col=1:4, pch=4, cex=3, lwd=4)}
+```
+
+## Assigning cluster membership
+
+```{r echo=F, warning=F, message=F}
+{plot(data4$salary, data4$height, col=c1$cluster, pch=1, main="Iteration: 1"
+      , ylab='Height scaled', xlab='Income scaled')
+points(c1$centers, col=1:4, pch=4, cex=3, lwd=4)}
+```
+
+## Iterative algorithm
+
+```{r echo=F}
+{plot(data4$salary, data4$height, col=c2$cluster, pch=1, main="Iteration: 2"
+      , ylab='Height scaled', xlab='Income scaled')
+points(c2$centers, col=1:4,pch=4,cex=3, lwd=4)}
+```
+
+## What happened in the iterations?
+
+```{r echo=F}
+{plot(data4$salary, data4$height, col='white', pch=1, main="Diff. iteration 1 and 2"
+      , ylab='Height scaled', xlab='Income scaled', xlim=c(-1.5,1.5), ylim=c(-2,2))
+points(c1$centers, col=1:4, pch=4, cex=3, lwd=1)
+points(c2$centers, col=1:4, pch=4, cex=3, lwd=1)}
+```
+
+##
+
+```{r message=F, echo=F}
+library(factoextra)
+fviz_cluster(unsup_model_1, geom = "point", data = data4)
+```
+
+## The k-means algorithm in detail
+
+- set random centroids in n-dimensional space
+- assign each observation to its closest centroid
+- find new centroids
+- re-assign the observations
+- (iterative approach)
+
+## Assigning cluster membership
+
+```{r echo=F}
+plot(c(1,1,2,4,5,5), c(3,1,3,1,5,4), xlim=c(0,6), ylim=c(0,6)
+     , pch=c(19,19,4,19,19,4)
+     , cex=c(1,1,3,1,1,3)
+     , xlab='X', ylab='Y'
+     , main='Iteration 1')
+```
+
+## Obtaining distances (errors)
+
+```{r echo=F}
+{plot(c(1,1,2,4,5,5), c(3,1,3,1,5,4), xlim=c(0,6), ylim=c(0,6)
+     , pch=c(19,19,4,19,19,4)
+     , cex=c(1,1,3,1,1,3)
+     , xlab='X', ylab='Y'
+     , main='Cluster assignment')
+segments(1,1,2,3,lty = 2)}
+```
+
+##
+
+```{r echo=F}
+{plot(c(1,1,2,4,5,5), c(3,1,3,1,5,4), xlim=c(0,6), ylim=c(0,6)
+     , pch=c(19,19,4,19,19,4)
+     , cex=c(1,1,3,1,1,3)
+     , xlab='X', ylab='Y'
+     , main='Cluster assignment')
+segments(1,1,2,3,lty = 2)
+segments(1,1,5,4,lty = 2)}
+```
+
+## Distance metric
+
+
+- typically: Euclidean distance
+- $dist(p, c) = \sqrt{(p_1 - c_1)^2 + (p_2 - c_2)^2}$
+
+$dist(p[1,1], c[2,3]) = \sqrt{(1 - 2)^2 + (1 - 3)^2} = \sqrt{5} = 2.24$
+
+Objective: $\arg \min D(p_i, c_j)$
+
+## After distance-based assignment
+
+```{r echo=F}
+plot(c(1,1,2,4,5,5), c(3,1,3,1,5,4), xlim=c(0,6), ylim=c(0,6)
+     , pch=c(19,19,4,19,19,4)
+     , cex=c(1,1,3,1,1,3)
+     , col=c('red','red','red', 'blue','blue','blue')
+     , xlab='X', ylab='Y'
+     , main='Cluster assignment')
+```
+
+## New centroids: k-MEANS
+
+| X 	| Y 	| Cluster 	|
+|---	|---	|---------	|
+| 1 	| 1 	| red     	|
+| 1 	| 3 	| red     	|
+| 4 	| 1 	| blue    	|
+| 5 	| 5 	| blue    	|
+
+$Mx_{red} = \frac {1+1}{2} = 1$
+
+$My_{red} = \frac {1+3}{2} = 2$
+
+$M_{red} = [1, 2]$
+
+## New centroids
+
+```{r echo=F}
+plot(c(1,1,1,4,5,4.5), c(3,1,2,1,5,3), xlim=c(0,6), ylim=c(0,6)
+     , pch=c(19,19,4,19,19,4)
+     , cex=c(1,1,3,1,1,3)
+     , col=c('red','red','red', 'blue','blue','blue')
+     , xlab='X', ylab='Y'
+     , main='New centroids after iter. 1')
+```
+
+## Iteration after iteration
+
+```{r echo=F}
+{plot(c(1,1,1,4,5,4.5), c(3,1,2,1,5,3), xlim=c(0,6), ylim=c(0,6)
+     , pch=c(19,19,4,19,19,4)
+     , cex=c(1,1,3,1,1,3)
+     , xlab='X', ylab='Y'
+     , main='Iter. 2')
+segments(1,1,1,2, lty=2)
+segments(1,1,4.5,3, lty=2)}
+```
+
+## Cluster membership after iteration 2
+
+```{r echo=F}
+plot(c(1,1,1,4,5,4.5), c(3,1,2,1,5,3), xlim=c(0,6), ylim=c(0,6)
+     , pch=c(19,19,4,19,19,4)
+     , cex=c(1,1,3,1,1,3)
+     , col=c('red','red','red', 'blue','blue','blue')
+     , xlab='X', ylab='Y'
+     , main='Clusters after iter. 2')
+```
+
+
+## Stopping rule
+
+If any of these apply:
+
+- convergence (i.e. no points change cluster membership)
+- max. number of iterations (`iter.max = ...`)
+- distance threshold reached
+
+## 
+
+### What's strange about our approach?
+
+
+## How do we know _k_?
+
+
+Possible approach: 
+
+- run it for $n$ combinations: $k=1, k=2, ... k=n$
+- assess how good _k_ is
+
+What does "good" mean?
+
+
+
+## Determining _k_
+
+WSS = within (cluster) sum of squares
+
+- take difference between each point $x_i$ in cluster $c_j$
+- remember: $c_j$ is now the mean of all points $x_{i,j}$
+- so: we square the difference
+
+$\arg \min \sum\limits_{x_{i,j}, c_j}(x_{i, j} - c_j)^2$
+
+## Cluster determination
+
+```{r}
+wss = numeric()
+for(i in 1:20){
+  kmeans_model = kmeans(data4, centers = i, iter.max = 20, nstart = 10)
+  wss[i] = kmeans_model$tot.withinss
+}
+```
+
+## For $k=1 .. k=20$
+
+```{r}
+wss
+```
+
+
+## Scree plot (= the elbow method)
+
+```{r echo=F}
+plot(1:20, wss, type='b')
+```
+
+## Other methods to establish _k_
+
+- Silhoutte method (cluster fit)
+- Gap statistic
+
+See also [this](https://uc-r.github.io/kmeans_clustering) tutorial.
+
+
+## Silhouette method
+
+```{r echo=F}
+fviz_nbclust(data4, kmeans, method = "silhouette")
+```
+
+## Gap statistic
+
+```{r echo=F, message=F, warning=F}
+library(cluster)
+set.seed(123)
+gap_stat = clusGap(data4, FUN = kmeans, nstart = 10, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+```
+
+## Applying k-means clustering
+
+We settle for $k = 2$
+
+```{r}
+unsup_model_final = kmeans(data4
+                       , centers = 2
+                       , nstart = 10
+                       , iter.max = 10)
+```
+
+## Plot the cluster assignment
+
+```{r echo=F}
+clusters = unsup_model_final$cluster
+plot(data3$salary, data3$height
+     , ylim=c(-3, 3)
+     , xlim=c(-3,3)
+     , col=clusters
+     , pch=19
+     , ylab='Height scaled'
+     , xlab='Income scaled'
+     , main='Final cluster assignment')
+```
+
+
+## Other unsupervised methods
+
+- k-means (today)
+- hierarchical clustering
+- density clustering
+
+## Issues with unsupervised learning
+
+What's lacking?
+
+What can you (not) say?
+
+## Caveats of unsup. ML
+
+- there is no "ground truth"
+- interpretation/subjectivity
+- cluster choice
+
+## Interpretation of findings
+
+```{r echo=F}
+plot(data3$salary, data3$height
+     , ylim=c(-3, 3)
+     , xlim=c(-3,3)
+     , col=clusters
+     , pch=19
+     , ylab='Height scaled'
+     , xlab='Income scaled'
+     , main='What do these clusters mean?')
+```
+
+## Interpretation of findings
+
+```{r}
+unsup_model_final$centers
+```
+
+- Cluster 1: lower salary, shorter height
+- Cluster 2: higher salary, larger height
+- People in cluster 1 earn less and are shorter than those in cluster 2
+
+_We cannot say more than that!_
+
+
+
+## Interpretation of findings
+
+<img src="../img/trajectory1.png">
+
+## Interpretation of findings
+
+- subjective
+- labelling tricky
+- researchers choice!
+- be open about this
+
+## Cluster choice
+
+What if we chose $k=3$?
+
+```{r echo=F}
+km_3 = kmeans(data4, centers = 3, nstart = 10, iter.max = 10)
+clusters_k3 = km_3$cluster
+plot(data3$salary, data3$height
+     , ylim=c(-3, 3)
+     , xlim=c(-3,3)
+     , col=clusters_k3
+     , pch=19
+     , ylab='Height scaled'
+     , xlab='Income scaled'
+     , main='Same data, different k')
+```
+
+## When k changes, the interpretation changes
+
+```{r}
+km_3$centers
+```
+
+## Interpretation for k=3
+
+- Cluster 1: avg-to-high salary, small
+- Cluster 2: very low salary, small
+- Cluster 3: high salary, very tall
+
+## Cluster choice
+
+- be open about it
+- make all choices transparent
+- always share code and data ("least vulnerable"" principle)
+
+## Important
+
+Note: we cannot say anything about accuracy.
+
+See the [k-NN model](https://www.datacamp.com/community/tutorials/machine-learning-in-r#six).
+
+## Bigger picture of machine learning
+
+- covered so far: supervised + unsupervised learning
+- next week: neural networks
+
+How do supervised and unsupervised learning relate to each other?
+
+## Case example
+
+- suppose you want to measure hate speech in the UK
+- on Twitter
+- and you have 10m Tweets of interest
+
+## Possible approach
+
+- you craft rules to determine hate speech vs non-hate speech
+- problematic: might not capture all dynamics + costly
+
+Better: supervised machine learning (text classification)
+
+## Text classification approach
+
+- you annotate some data (typically crowdsourced)
+- you build a supervised learning model
+- with proper train-test splitting
+- and assess the model with $Pr_{hatespeech}$
+
+Suppose you have a good enough model.
+
+## Remember
+
+- the aim was to measure hate speech in the UK
+- your model should now be good to annotate unlabelled data
+- i.e. you can use the model on all Tweets
+- and then answer the RQ
+
+## What's next?
+
+- Today's tutorial + homework: unsupervised learning on in R
+
+Next week: Machine Learning 3

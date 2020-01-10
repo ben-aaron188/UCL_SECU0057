@@ -172,6 +172,8 @@ Please ensure that you follow the guides below to setup your computer with the n
     - Ignatow & Mihalcea, 2018: C8 Basic text properties
     - [Grolemund & Wickham, 2016: C14 Strings](https://r4ds.had.co.nz/strings.html)
     - [Quanteda quick start guide](https://quanteda.io/articles/quickstart.html)
+    - Schoonvelde, M., Brosius, A., Schumacher, G., & Bakker, B. N. (2019). Liberals lecture, conservatives communicate: Analyzing complexity and ideology in 381,609 political speeches. PLOS ONE, 14(2), e0208450. [https://doi.org/10.1371/journal.pone.0208450](https://doi.org/10.1371/journal.pone.0208450)
+- Recommended:
     - [Regular expressions with stringr](https://stringr.tidyverse.org/articles/regular-expressions.html)
 - Slides: [Week 3: Text Mining 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_3/week3_secu0057.html)
 - Tutorial + Homework: [Tutorial, week 3: Text Mining 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_3/week3_tutorial_secu0057.nb.html)
@@ -228,25 +230,23 @@ _Use this week to catch up on any literature or homework/tutorials._
 
 ### Week 8 - Machine learning II (5 Mar)
 
-- Topics covered: unsupervised machine learning, core algorithms, pitfalls
+- Topics covered: unsupervised machine learning, core algorithm, problems
 - Required preparation
     - [Gatto, 2019: C4 Unsupervised learning](https://lgatto.github.io/IntroMachineLearningWithR/unsupervised-learning.html)
+    - Denny, M. J., & Spirling, A. (2018). Text Preprocessing For Unsupervised Learning: Why It Matters, When It Misleads, And What To Do About It. Political Analysis, 26(2), 168–189. [https://doi.org/10.1017/pan.2017.44](https://doi.org/10.1017/pan.2017.44)
     - [Datacamp unsupervised learning](https://www.datacamp.com/courses/unsupervised-learning-in-r)
-- Slides
-- Tutorial
-- Homework
+- Slides: [Week 8: Machine Learning 2]()
+- Tutorial + Homework: [Tutorial, week 8: Machine Learning 2]()
 
-    <!-- - [Quanteda authorship prediction](https://quanteda.io/articles/pkgdown/replication/qss.html) -->
 
 ### Week 9 - Machine learning III (12 Mar)
 
 Guest lecture: Josh Kamps (Doctoral researcher)
 
-- Topics covered: neural networs, deep learning
-- Required preparation: tbc
-- Slides
-- Tutorial
-- Homework
+- Topics covered: neural networks in R, intro to deep learning
+- Required preparation: [tbc]
+- Slides: [tbc]
+- Tutorial + homework: [tbc]
 
 
 ### Week 10 - Case studies (19 Mar)
@@ -281,9 +281,8 @@ Guest lecture: Josh Kamps (Doctoral researcher)
     - Kurakin, A., Goodfellow, I., & Bengio, S. (2017). Adversarial examples in the physical world. ArXiv:1607.02533 [Cs, Stat]. Retrieved from [http://arxiv.org/abs/1607.02533](http://arxiv.org/abs/1607.02533)
     - Azucar, D., Marengo, D., & Settanni, M. (2018). Predicting the Big 5 personality traits from digital footprints on social media: A meta-analysis. Personality and Individual Differences, 124, 150–159. [https://doi.org/10.1016/j.paid.2017.12.018](https://doi.org/10.1016/j.paid.2017.12.018)
     - van der Vegt, I., Mozes, M., Gill, P., & Kleinberg, B. (2019). Online influence, offline violence: Linguistic responses to the “Unite the Right” rally. ArXiv:1908.11599 [Cs]. Retrieved from http://arxiv.org/abs/1908.11599
-- Slides
-- Tutorial: work on project.
-- Homework
+- Slides: [tbc]
+- Tutorial + Homework: [tbc]
 
 
 ## Materials
