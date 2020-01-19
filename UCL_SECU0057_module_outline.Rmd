@@ -147,8 +147,8 @@ Please ensure that you follow the guides below to setup your computer with the n
     - Pfeffer, J., Mayer, K., & Morstatter, F. (2018). Tampering with Twitter’s Sample API. EPJ Data Science, 7(1), 50. [https://doi.org/10.1140/epjds/s13688-018-0178-0](https://doi.org/10.1140/epjds/s13688-018-0178-0)
     - Morstatter, F., Pfeffer, J., Liu, H., & Carley, K. M. (2013). Is the Sample Good Enough? Comparing Data from Twitter’s Streaming API with Twitter’s Firehose. ArXiv:1306.5204 [Physics]. Retrieved from [http://arxiv.org/abs/1306.5204](http://arxiv.org/abs/1306.5204)
     - [MDN HTML basics](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics), [MDN HTML tables](https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Basics)
-- Slides: [Week 1: Web data collection 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_1/week1_secu0057.html)
-- Tutorial + Homework: [Tutorial, week 1: web data collection](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_1/week1_tutorial_secu0057.nb.html)
+- Slides: [Week 1: Web data collection 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_1/week1_secu0057.html), [PDF](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/lectures/week_1/week1_secu0057.pdf)
+- Tutorial + Homework: [Tutorial, week 1: web data collection](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_1/week1_tutorial_secu0057.nb.html), [Tutorial solutions](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_1/week1_tutorial_secu0057_solutions.nb.html)
 
 ### Week 2 - Web data collection II (23 Jan)
 
