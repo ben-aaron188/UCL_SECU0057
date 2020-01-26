@@ -56,7 +56,9 @@ _We are obsessed with documenting._
 
 How would you analyse the text?
 
-##
+## Example
+
+> All I ever wanted was to love women, and in turn to be loved by them back. Their behavior towards me has only earned my hatred, and rightfully so! I am the true victim in all of this. I am the good guy. Humanity struck at me first by condemning me to experience so much suffering. I didn’t ask for this. I didn’t want this. I didn’t start this war. I wasn’t the one who struck first. But I will finish it by striking back. I will punish everyone. And it will be beautiful. Finally, at long last, I can show the world my true worth.
 
 ## Challenge of quantification
 
@@ -66,11 +68,6 @@ How would you analyse the text?
 - but: for quantitative analyses, we need numbers
 
 Text --> numerical representation?
-
-## Example
-
-  > All I ever wanted was to love women, and in turn to be loved by them back. Their behavior towards me has only earned my hatred, and rightfully so! I am the true victim in all of this. I am the good guy. Humanity struck at me first by condemning me to experience so much suffering. I didn’t ask for this. I didn’t want this. I didn’t start this war. I wasn’t the one who struck first. But I will finish it by striking back. I will punish everyone. And it will be beautiful. Finally, at long last, I can show the world my true worth.
-
 
 ## Features of text data
 
@@ -212,7 +209,7 @@ ntoken(er)/nsentence(er)
 - frequency of each token in each document
 - represented in a table (matrix)
 - tokens are features of a document
-- voilá: fancy name --> **Document Feature Matrix (= DFM)**
+- voilá: **Document Feature Matrix (= DFM)**
 
 ```{r}
 example_string_tok = tokens("I think I believe him")
@@ -270,18 +267,18 @@ summary(mini_corpus)
 
 ## DFM representation
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 corpus_tokenised = tokens(mini_corpus)
 corpus_dfm = dfm(corpus_tokenised)
 ```
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(corpus_dfm[, 1:8])
 ```
 
 ##
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(corpus_dfm[, 31:38])
 ```
 
@@ -310,7 +307,7 @@ topfeatures(corpus_dfm[2])
 
 ## Word importance
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(corpus_dfm[, 10:15])
 ```
 
@@ -319,28 +316,29 @@ We want to "reward" words that are:
 - important locally (for individual documents)
 - but not 'inflated' globally (for the whole corpus)
 
-## Metric for word importance
+## Metric for word importance: term frequency
 
+- $tf(t, d) = \frac{\#_{t,d}}{nwords_d}$ (proportion)
+- $tf(t, d) = #_{t,d}$ (count)
 
-1. Term frequency
+## Proportions
 
-$tf(t, d) = \frac{\#_t}{nwords_d}$
-
-## Counts
-
-```{r echo=F}
-knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'count'), 3)[, 10:15])
-```
-
-## Term frequencies
-
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'prop'), 3)[, 10:15])
 ```
 
-## Double-check the formula
 
-$tf(t, d) = \frac{\#_t}{nwords_d}$
+## Counts
+
+```{r echo=F, message=FALSE, warning=FALSE}
+knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'count'), 3)[, 10:15])
+```
+
+
+## Double-check the formulae
+
+- $tf(t, d) = \frac{\#_{t, d}}{nwords_d}$ 
+- $tf(t, d) = #_{t, d}$
 
 ```{r}
 3/ntoken(mini_corpus[1])
@@ -350,19 +348,19 @@ Term frequency: _reward for words that occur often in a document_
 
 ## Problem
 
-Some words just occur a lot anyway (e.g. "stopwords").
+Some words just occur a lot anyway (e.g. "stop words").
 
 Global occurrence: document frequency
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(docfreq(corpus_dfm, scheme = 'count')[10:15])
 ```
 
-$df(t) = #\ of\ documents\ with\ t$
+$df(t) =$ # of docs with t
 
 ## DF
 
-```{r}
+```{r echo=F, message=FALSE, warning=FALSE}
 {x = 1:50
 plot(x, ylim=c(-5, max(x)), type='l', col='blue', lwd=2.5, ylab="")
 legend(5, 45, legend=c("DF"), col=c("blue"), lty=c(1), cex=0.8)}
@@ -378,13 +376,11 @@ Trick: _inverse_ document-frequency
 
 ## Inverse DF (IDF)
 
-$df(t) = #\ of\ documents\ with\ t$
-
 $idf(t) = \frac{N}{df(t)}$
 
 ## IDF
 
-```{r}
+```{r echo=F}
 {x = 1:50
 plot(x, ylim=c(-5, max(x)), type='l', col='blue', lwd=2.5, ylab="")
 lines(max(x)/x, col='red', lty=2, lwd=2)
@@ -395,10 +391,43 @@ legend(5, 45, legend=c("DF", "N/DF"), col=c("blue", "red"), lty=c(1,2), cex=0.8)
 
 - What happens if $N$ becomes really large?
 
+##
+
+```{r echo=F}
+{x = 1:500
+plot(x, ylim=c(-5, max(x)), type='l', col='blue', lwd=2.5, ylab="")
+lines(max(x)/x, col='red', lty=2, lwd=2)
+legend(50, 450, legend=c("DF", "N/DF"), col=c("blue", "red"), lty=c(1,2), cex=0.8)}
+```
+
 ## Log IDF
 
 - to avoid extreme values, we use the logarithm
 - simple transformation: $idf(t) = log(\frac{N}{df(t)+1})$
+
+## About logarithms
+
+$log_b(a) = c <=> b^c = a$
+
+"the power to which {base b} would have to be raised to equal a"
+
+$log_2(8) = ?$ --> $2^? = 8$
+
+## Logarithm bases
+
+- natural logarithm: base $e = 2.718281...$
+- base 10 logarithm: $log_{10}(x)$
+
+##
+
+```{r echo=F}
+{x = 1:10
+plot(log(x), ylim=c(-1, 5), type='l', col='blue', lwd=2.5, ylab="", panel.first = grid(), main = 'Logarithm with base e, 2, and 10')
+lines(log10(x), col='red', lty=2, lwd=2)
+lines(log2(x), col='green', lty=2, lwd=2)
+legend(3, 4, legend=c("log10", "ln", "log2"), col=c("red", "blue", 'green'), lty=c(1,2), cex=0.8)}
+```
+
 
 ## Log IDF
 
@@ -415,13 +444,13 @@ legend(5, 45, legend=c("DF", "N/DF", "log(N/(DF+1)"), col=c("blue", "red", 'gree
 
 1. Local importance (TF)
 
-```{r echo=F}
-knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'prop'), 3)[, 10:12])
+```{r echo=F, message=FALSE, warning=FALSE}
+knitr::kable(round(dfm_weight(corpus_dfm, scheme = 'count'), 3)[, 10:12])
 ```
 
 2. Correct for global occurrences (DF)
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(docfreq(corpus_dfm, scheme = 'inverse', k = 1)[10:12])
 ```
 
@@ -429,10 +458,10 @@ knitr::kable(docfreq(corpus_dfm, scheme = 'inverse', k = 1)[10:12])
 
 ```{r eval=F}
 #text1: "and"
-0.024/-0.1760913
+3/-0.1760913
 
 #text2: "and"
-0.023/-0.1760913
+2/-0.1760913
 ```
 
 
@@ -445,19 +474,19 @@ knitr::kable(docfreq(corpus_dfm, scheme = 'inverse', k = 1)[10:12])
 
 ##
 
-### Working witg text as data
+### Working with text as data
 
 ## Researcher's degrees of freedom
 
-- stopword removal
+- stop word removal
 - stemming
 
 ## Stopword removal
 
 - We know many words are "low in meaning"
-- so-called stopwords
+- so-called stop words
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(stopwords()[c(1:5, 20:25)])
 ```
 
@@ -466,14 +495,14 @@ You could decide to remove these.
 ## Without stopword removal
 
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(corpus_dfm[, 1:8])
 ```
 
 
 ## With stopword removal
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 corpus_dfm_sw_removed = dfm(corpus_tokenised, remove = stopwords())
 knitr::kable(corpus_dfm_sw_removed[, 1:8])
 ```
@@ -491,30 +520,30 @@ love_stem = c("love", "loved", "loving", "lovely")
 ```
 
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 love_stem_tok = tokens(love_stem)
 knitr::kable(dfm(love_stem_tok))
 ```
 
 ## After stemming
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(dfm(love_stem_tok, stem = T))
 ```
 
 ## Our mini corpus
 
-Incl. stopwords and without stemming:
+Incl. stop words and without stemming:
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 knitr::kable(corpus_dfm[, 1:8])
 ```
 
 ## ... to 
 
-Without stopwords and stemmed:
+Without stop words and stemmed:
 
-```{r echo=F}
+```{r echo=F, message=FALSE, warning=FALSE}
 corpus_dfm_sw_removed_stemmed = dfm(corpus_tokenised, remove = stopwords(), stem = T)
 knitr::kable(corpus_dfm_sw_removed_stemmed[, 1:8])
 ```

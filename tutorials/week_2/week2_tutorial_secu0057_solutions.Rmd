@@ -1,0 +1,401 @@
+---
+title: "Tutorial, Week 2: Web data collection 2"
+subtitle: "SECU0057"
+author: "B Kleinberg, J Kamps, F Soldner"
+date: "23 Jan 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- extracting the free text details information for missing persons
+- using RSelenium to scrape data from the FBI's most wanted fugitives webpage
+- scraping a website for (grayzone) exotic animal trading
+
+
+_Note: this tutorial assumes that you have the packages `rvest` and `RSelenium` installed._
+
+
+## Task 1: Extracting the free text details information for missing persons
+
+In the lecture, we covered how we can scrape data from the FBI's missing persons website. Aside from the person information in the table, we might also be interested in the free text entries under the 'Details' heading (e.g. [https://www.fbi.gov/wanted/kidnap/steven-earl-kraft-jr-1](https://www.fbi.gov/wanted/kidnap/steven-earl-kraft-jr-1)).
+
+Scrape the 'Details' data for each of the first 40 missing persons and store the data locally in a list. The source page is: [https://www.fbi.gov/wanted/kidnap](https://www.fbi.gov/wanted/kidnap)
+
+```{r eval=F}
+library(rvest)
+
+#set target page
+target_url = 'https://www.fbi.gov/wanted/kidnap'
+
+#get html snapshot
+target_page = read_html(target_url)
+
+#get indiv. pages
+all_persons_links = target_page %>%
+  html_nodes('h3.title') %>%
+  html_nodes('a') %>%
+  html_attr('href')
+
+#set empty list for data dump
+list_for_data = list()
+
+#loop throuigh the indiv pages, retrieve data, store it in table at index i, proceed
+for(i in all_persons_links){
+  print(paste('Accessing:', i))
+  temp_target_url = i
+  temp_target_page = read_html(temp_target_url)
+  description = temp_target_page %>%
+    html_nodes('div.wanted-person-description') %>%
+    html_nodes('p') %>%
+    html_text()
+  index_of_i = which(i == all_persons_links)
+  list_for_data[[index_of_i]] = description
+  print('--- NEXT ---')
+}
+```
+
+
+
+```{r}
+#check whether data are as expected
+list_for_data[[2]]
+```
+
+
+
+## Task 2: Scraping data from the FBI's most wanted fugitives webpage with RSelenium
+
+If you look at the FBI's section on wanted fugitives - [https://www.fbi.gov/wanted/fugitives](https://www.fbi.gov/wanted/fugitives) - you can see that there are well above 200 people on that list.
+
+Similar to the example in the lecture, you can see that not all entries are loaded directly. This means that a standard, snapshot approach does not access all entries but merely the first 40 (in this case).
+
+Use [`RSelenium`]() and the [R Webscraping Cheat Sheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md) to answer the following questions:
+
+- How many male fugitives are wanted for "counterintelligence" and how many female fugitives for "white collar crime"? (hint: you will need the `table()` command once you have all the data in place).
+- What is the male-to-female ratio of wanted fugitives?
+
+Hint - You may want to use a procedure as follows:
+
+1. load RSelenium
+2. setup a connection to a simulated browser
+3. access the webpage
+4. simulate the needed user behaviour
+5. scrape the webpage
+6. extract the relevant data and answer the questions
+
+
+```{r eval=F}
+library(RSelenium)
+
+#make a connection
+selenium_firefox = rsDriver(browser=c("firefox"))
+
+#start a driver
+driver = selenium_firefox$client
+
+#set target url
+target_url = 'https://www.fbi.gov/wanted/fugitives'
+
+#navigate the driver (= simulated browser) to the target url
+driver$navigate(target_url)
+
+#find the html body
+page_body = driver$findElement("css", "body")
+
+#send multiple scroll commands in a loop
+for(i in 1:60){
+  page_body$sendKeysToElement(list("key"="page_down"))
+  
+  # allow some time for this to happen (here: second)
+  Sys.sleep(1) 
+}
+
+#now access the page source (important: you need to do this through the driver)
+parsed_pagesource <- driver$getPageSource()[[1]]
+
+#now we can scrape the indiv page URLs from the page after the simulation
+all_indiv_pages <- read_html(parsed_pagesource) %>%
+  html_nodes('p.name') %>%
+  html_nodes('a') %>%
+  html_attr('href')
+
+# close the driver and the server
+driver$close()
+
+selenium_firefox$server$stop()
+
+
+#next we go to each page and retrieve the information we need
+
+## 1. extract the gender info for all fugitives
+####set empty list for data dump
+list_for_data = list()
+
+#loop through the indiv pages, retrieve data, store it in table at index i, proceed
+for(i in all_indiv_pages){
+  print(paste('Accessing:', i))
+  temp_target_url = i
+  temp_target_page = read_html(temp_target_url)
+  description = temp_target_page %>%
+    html_nodes('table.wanted-person-description') %>%
+    html_table()
+  index_of_i = which(i == all_indiv_pages)
+  list_for_data[[index_of_i]] = description
+  print('--- NEXT ---')
+}
+
+#check whether data are as expected
+list_for_data[[4]]
+
+#to get the row with the gender info: proof with single case before we loop
+temp_table_df = list_for_data[[4]][[1]] #note that the table data is in the first list element of the nested list!
+
+temp_table_df[temp_table_df$X1 == 'Sex', ]
+
+
+## build the loop
+### Note: we could do this directly in the loop above or run a new loop on the populated list_for_data
+### We will also directly incorporate the info for the reason of why these people are on the list
+
+####Loop for list_for_data
+
+list_for_gender_data = list()
+for(j in 1:length(list_for_data)){
+
+  print(j)
+  
+  #Since we might have some unpopulated data, we want to work with try..catch which allows us to define what should happen if we encounter errors
+  
+  tryCatch({
+    
+    temp_table_df = list_for_data[[j]][[1]]
+  sex = temp_table_df[temp_table_df$X1 == 'Sex', 'X2']
+  
+  #this removes the name in the url
+  ## Note that the stringr::X method simply reads as "from the stringr package, use function X"
+  reason_raw = stringr::str_extract(all_indiv_pages[j], "https://www.fbi.gov/wanted/(.*)/")
+  
+  #now we remove the slashes and the "https://www.fbi.gov/wanted"
+  reason_raw_2 = stringr::str_remove_all(reason_raw, pattern = "/")
+  reason = stringr::str_remove(reason_raw_2, 'https:www.fbi.govwanted')
+  
+  #we also want the name of the fugitive
+  fugitive_name = stringr::str_extract(all_indiv_pages[j], "([^/]+$)")
+  
+  #now we create a dataframe with the columns "name", "sex", "reason"
+  temp_df = data.frame('name' = fugitive_name
+                       , 'sex' = sex
+                       , 'reason' = reason)
+  
+  #and lastly, we push that dataframe to the list
+  list_for_gender_data[[j]] = temp_df
+    
+  }, error = function(e) {print(paste("ERROR at [", j, '] --> ', conditionMessage(e), sep=""))}
+  
+  )
+    
+}
+
+#check the data
+list_for_gender_data[3]
+
+#now we can analyse the data
+## we want to merge all the list elements (which are dataframes with all identical names) to one big dataframe
+## the rbindlist function can do this:
+
+fugitive_data = data.table::rbindlist(list_for_gender_data)
+head(fugitive_data)
+
+##How many male fugitives are wanted for "counterintelligence"?
+table(fugitive_data$sex[fugitive_data$reason == 'counterintelligence'])
+
+## How many female fugitives are wanted for "white collar crime"?
+table(fugitive_data$sex[fugitive_data$reason == 'wcc'])
+
+##What is the male-to-female ratio of wanted fugitives?
+table(fugitive_data$sex)
+```
+
+
+**Note: you might find this primer on table scraping with rvest useful: [http://bradleyboehmke.github.io/2015/12/scraping-html-tables.html](http://bradleyboehmke.github.io/2015/12/scraping-html-tables.html)** 
+
+There are several ways of solving this problem. Depending on your approach, you may find these hints useful:
+
+- use the `html_table()` function of `rvest` to store data as a dataframe
+- have a look at this SO question on how to transpose (= flip rows and colums of) a dataframe: [https://stackoverflow.com/q/6778908/3421089](https://stackoverflow.com/q/6778908/3421089)
+- you may want to decide to only use columns that are relevant as not all columns are present in all cases
+
+
+## Task 3: Scraping data from the website _exoticanimalsforsale.net_
+
+The webpage [https://www.exoticanimalsforsale.net/animalsforsale.asp](https://www.exoticanimalsforsale.net/animalsforsale.asp) "offers" a range of exotic animals for sale online. 
+
+Use webscraping to extract data from this trading website. The data you want to scrape is up to you. Some ideas are:
+
+- animal descriptions
+- the asking price
+- the location
+
+```{r eval=F}
+# Scraping listing name, and the auction details
+target_page = read_html("https://www.exoticanimalsforsale.net/animalsforsale.asp?page=1")
+
+# Dynamically get number of pages by scraping the page number selector
+# and extracting the max value
+num_pages = target_page %>% 
+  html_nodes("ul.pagination") %>% 
+  html_nodes('li.page-item') %>% 
+  html_nodes('a.page-link') %>% 
+  html_text('a')
+
+# Coerce the values from the page number selector to be numeric as opposed to strings,
+# and select the max value while ignoring any non-numeric character (NAs)
+num_pages = max(as.numeric(num_pages), na.rm=TRUE)
+
+# Notice the link structure of each page contains the page number at the end e.g. page=1 
+# "https://www.exoticanimalsforsale.net/animalsforsale.asp?page=1"
+# We can now cycle through 1-num_pages and scrape
+
+# Master vectors
+all_listing_names <- c()
+all_listing_details <-c()
+
+# !!!!!!!!! NOTE: If you want to extract ALL pages, change 2 to num_pages (currently 60). I use 2 for testing purposes.
+for(i in 1:2) {
+  print(paste('Accessing page:', i))
+
+  # paste the current page number on to the end of the link
+  target_url = paste0("https://www.exoticanimalsforsale.net/animalsforsale.asp?page=",1)
+  target_page = read_html(target_url)
+
+  # extract the listing name+details for the current page
+  details = target_page %>%
+    html_nodes('div.classifiedsListings') %>%
+    html_nodes('div.classifiedsListing') %>% 
+    html_nodes('div.classifiedsListingRight')
+  
+  # Extract the listing name
+  listing_names = details %>% 
+    html_nodes('h2') %>% 
+    html_text('a')
+  
+  # Extract the listing details
+  listing_details = details %>% 
+    html_nodes('ul') %>% 
+    html_text('li')
+
+    # append on to master vectors
+    all_listing_names <- append(all_listing_names,listing_names)
+    all_listing_details <- append(all_listing_details,listing_details)
+    
+  print('--- NEXT PAGE ---')
+}
+```
+
+Cleaning the data
+
+```{r eval=F}
+## CLEANING EXOTIC ANIMAL DATA
+## Requires the following packages: purrr, stringr
+library(purrr)
+library(stringr)
+
+# Helper function
+clean_details <- function(details_vector) {
+   
+    # Takes one of the vectors from all_listing_details and cleans it
+    result <- details_vector %>% 
+      strsplit(split = "\n") %>% # split by new line
+      unlist() %>% # turn into a vector
+      trimws() # remove whitespace
+    
+    # remove empty strings and the 'view profile' text
+    result <- result[result != "" & result != "View Profile"]
+    result
+}
+
+# The first thing to notice is that all listing names and all the listing details are in separate vectors. We need to make sure we can associate the listing names with their respective details.
+
+# So we convery the details to a list, so that each detail is its own unit
+all_listing_details_list <- as.list(all_listing_details)
+
+# Then this will run our clean_details() function over every listing detail
+all_listing_details_list <- rapply(all_listing_details_list, clean_details, how="replace")
+
+# We will now extract the sellers name, price (if listed), and location from the ad details
+# There is other information there, but this is good for now
+
+# Extracting name is straightforward because it exists in all listings (assumption)
+# str_subset is used to return the entries in the list which contain the "Name", 
+# then this is unlisted to turn it into a vector
+name_list <- map(all_listing_details_list, str_subset, "Name")
+name_vector <- unlist(name_list)
+name_vector <- str_remove(name_vector, "Name: ")
+
+# Extracting price works the same way, but there is an extra step, because not all listing contain a price.
+# So we have to test for that and replace "character(0)" (which is whats returned by str_subset, if it doesn't find a match) with NA
+price_list <- map(all_listing_details_list, str_subset, "Price")
+price_list <- rapply(price_list
+                     , function(x) ifelse(identical(x,character(0)),NA,x), how = "replace")
+price_vector <- unlist(price_list)
+price_vector <- str_remove(price_vector, "Price: ") # remove the "Name:" from before the name
+
+# Location is done the same as name
+location_list <- map(all_listing_details_list, str_subset, "Location")
+location_vector <- unlist(location_list)
+location_vector <- str_remove(location_vector, "Location: ")
+
+# Now that all our infomation is vectorised, we can turn this into a dataframe
+final_df = data.frame("Listing.Name" = listing_names, 
+                      "Seller.Name" = name_vector, 
+                      "Price" = price_vector, 
+                      "Location" = location_vector)
+
+View(final_df)
+
+## NOTE1: Data frame columns are not yet the correct type. E.g. Price is still a string.
+## NOTE2: There are further columns you could extract from the details, such as phone numb
+
+```
+
+
+
+---
+
+## Homework
+
+### Part 1: Refining your `rvest` skills
+
+For the below you will also need the `tidyverse` package set in R. This framework is a set of packages that offers a unified way to deal with data (i.e. before analysing the data) in R. You do not need to fully use the tidyverse way of using R but if you want to, we encourage this.
+
+Replicate the three tutorials on different webscraping challenges below:
+
+- Scraping consumer reviews from Trustpilot: [https://www.datacamp.com/community/tutorials/r-web-scraping-rvest](https://www.datacamp.com/community/tutorials/r-web-scraping-rvest)
+- Scraping text of misrepresentations of D. Trump: [https://towardsdatascience.com/web-scraping-tutorial-in-r-5e71fd107f32](https://towardsdatascience.com/web-scraping-tutorial-in-r-5e71fd107f32)
+- Scraping artist data and lyrics of their songs: [https://towardsdatascience.com/learn-to-create-your-own-datasets-web-scraping-in-r-f934a31748a5](https://towardsdatascience.com/learn-to-create-your-own-datasets-web-scraping-in-r-f934a31748a5)
+
+
+### Part 2: Web scraping practice
+
+The website [http://toscrape.com/](http://toscrape.com/) is a sandbox to refine and test your webscraping skills. You can find two webpages there: a book store and a quotes website. Try to scrape these pages.
+
+The book store is non-dynamic and does not require any browser-simulation for the scraping. The quotes website contains more detailed HTML/Javascript features and is a bigger challenge.
+
+It's advisable to use the [R Webscraping Cheat Sheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
+
+
+### Part 3: Data collection for your project
+
+Now that you have a good basis to obtain data from web sources, start to think about the data collection for your project (i.e. which sources to scrape and how to implement this). You should start with some of the ideas from last week and begin with the R implementation. This will give you time to revise the approach and address (likely) hiccups along the way.
+
+### Part 4: Preparation for next week
+
+Please ensure that you have installed and can load the following R packages:
+
+- quanteda
+- stringr
+- readability
+
+---
