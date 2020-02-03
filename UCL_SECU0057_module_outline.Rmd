@@ -174,8 +174,8 @@ Please ensure that you follow the guides below to setup your computer with the n
     - Schoonvelde, M., Brosius, A., Schumacher, G., & Bakker, B. N. (2019). Liberals lecture, conservatives communicate: Analyzing complexity and ideology in 381,609 political speeches. PLOS ONE, 14(2), e0208450. [https://doi.org/10.1371/journal.pone.0208450](https://doi.org/10.1371/journal.pone.0208450)
 - Recommended:
     - [Regular expressions with stringr](https://stringr.tidyverse.org/articles/regular-expressions.html)
-- Slides: [Week 3: Text Mining 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_3/week3_secu0057.html)
-- Tutorial + Homework: [Tutorial, week 3: Text Mining 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_3/week3_tutorial_secu0057.nb.html)
+- Slides: [Week 3: Text Mining 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_3/week3_secu0057.html), [PDF](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/lectures/week_3/week3_secu0057.pdf)
+- Tutorial + Homework: [Tutorial, week 3: Text Mining 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_3/week3_tutorial_secu0057.nb.html), [Tutorial solutions](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_3/week3_tutorial_secu0057_solutions.nb.html)
 
 ### Week 4 - Text mining II (6 Feb)
 
