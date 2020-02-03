@@ -10,6 +10,10 @@ output:
     center: true
 ---
 
+```{r global_options, message=FALSE, warning=FALSE}
+
+```
+
 ##  {data-background="../img/ucl_artwork/ucl-banner-land-darkblue-rgb.png" data-background-size="70%" data-background-position="top" data-background-opacity="1"}
 
 </br>
@@ -19,6 +23,13 @@ Applied Data Science
 ```{r message=F, include=FALSE}
 library(quanteda)
 ```
+
+##
+
+<img src='../img/authorship.png'>
+
+[URL to the article](https://www.scientificamerican.com/article/how-a-computer-program-helped-show-jk-rowling-write-a-cuckoos-calling/)
+
 
 
 ## Week 4: Text mining 2
@@ -179,7 +190,7 @@ dim(bigrams)
 ## Problem?
 
 - essentially we're back at where we started
-- same old problem with ~word~ ngram importance
+- same old problem with ~~word~~ ngram importance
 
 ##
 
