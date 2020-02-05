@@ -145,7 +145,7 @@ You can access the dataset from: [https://github.com/ben-aaron188/UCL_SECU0050/b
 
 ```{r}
 ## Note: you need to set this path to the file location on your machine
-load('/Users/bennettkleinberg/GitHub/UCL_SECU0050/data/uk_rap_corpus.RData')
+load('/Users/bennettkleinberg/GitHub/UCL_SECU0057/data/uk_rap_corpus.RData')
 ```
 
 You now have a corpus object in your workspace called `uk_rap_corpus`. _(The ID variable is structured as follows: `artistname_songname`)_.
@@ -169,20 +169,21 @@ rap_tfidf[1:10, 1:10]
 
 ```{r}
 # Question 1
-borders_tfidf = dfm_subset(rap_dfm, song_name == "Borders")
+borders_tfidf = dfm_subset(rap_tfidf, song_name == "Borders")
 borders_top_tokens = topfeatures(borders_tfidf)
-# Answer: "we" with 36
+# Answer: "system" with 14.55
 borders_top_tokens
 ```
 
 ```{r}
 # Question 2
-# Let's choose the top token from Borders (Question 1): "we"
-we = convert(dfm_select(rap_dfm,"we"), to='data.frame')
+# Let's choose the token "we" from Borders
+we = convert(dfm_select(rap_tfidf, "we"), to='data.frame')
 plot(we$we,xlab="Song Index in DFM", ylab="Uses of \"we\"")
 
-# Bonus: How to see which songs have more than 30 uses of we? 
-we30 = subset(we, we > 30)
+# Bonus: How to see which songs have a value higher than 3? 
+we3 = subset(we, we > 3)
+we3
 ```
 
 ```{r}
@@ -198,6 +199,8 @@ legend(80, 500, legend=c("DF", "N/DF", "log(N/(DF+1)"), col=c("blue", "red", 'gr
 
 
 ```
+
+
 
 ```{r}
 # we can alo zoom in
