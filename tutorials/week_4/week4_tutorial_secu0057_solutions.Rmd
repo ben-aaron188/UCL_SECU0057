@@ -1,0 +1,325 @@
+---
+title: "Tutorial, Week 4: Text mining 2"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "6 Feb 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- extracting n-grams
+- applying sentence-based sentiment analysis
+- using sentiment trajectories to understand speeches and vlogs
+
+_Note: this tutorial assumes that you have installed the packages `spacyr` and `syuzhet`._
+
+
+## Task 1: n-gram in different domains
+
+In the lecture, we covered how n-grams are an extension of simple n=1 tokens. Use the functionalities covered in this week's and previous lectures to obtain the bi-grams and tri-grams for three different corpora: **the inaugural speeches corpus**, **the UK rap music corpus** and **the Guardian corpus you built in week 1**.
+
+What are the most common bi-grams (and tri-grams) for each of the three corpora?
+
+```{r}
+#Note: solutions done here on US inaugural speechs and drill only. For the Guardian corpus refer to the work you did in week 1 and 2.
+
+library(quanteda)
+us_speeches = data_corpus_inaugural
+load('/Users/bennettkleinberg/GitHub/UCL_SECU0057/data/uk_rap_corpus.RData')
+
+bigrams_us_speeches = dfm(x = us_speeches
+                         , ngrams = 2)
+bigrams_rap = dfm(x = uk_rap_corpus
+                         , ngrams = 2)
+
+trigrams_us_speeches = dfm(x = us_speeches
+                         , ngrams = 3)
+trigrams_rap = dfm(x = uk_rap_corpus
+                         , ngrams = 3)
+
+#most bigrams us speechs
+topfeatures(bigrams_us_speeches)
+
+#most bigrams drill
+topfeatures(bigrams_rap)
+
+#most trgrams us speechs
+topfeatures(trigrams_us_speeches)
+
+#most trigrams drill
+topfeatures(trigrams_rap)
+
+```
+
+To avoid an inflation of the matrices due to "low-meaning" words, exclude the stopwords and then weigh the bi-grams and tri-grams according to the TFIDF method.
+
+Which bi-gram (and tri-gram) has the highest average TFIDF value in each corpus? (_Hint: to calculate the average for the columns of a whole dataframe, have a look at the `apply` function._)
+
+```{r}
+# here done on bigrams for US speeches (solution is analogous UK rap and for trigrams)
+
+## get tfidf weighting
+tfidf_bigrams_us_speeches = dfm_tfidf(bigrams_us_speeches
+                                      , scheme_tf = 'count'
+                                      , scheme_df = 'inverse')
+
+## convert to a data.frame (which is needed for arithmetic operations
+df.tfidf_bigrams_us_speeches = convert(tfidf_bigrams_us_speeches
+                                       , to = 'data.frame')
+
+## inspech dataframe to see what we need to solve
+dim(df.tfidf_bigrams_us_speeches)
+df.tfidf_bigrams_us_speeches[1:10, 1:10]
+
+## note that we have one non-numerical variable 'document'. This creates problems if we want to average the columns.
+
+### remove first column
+df.tfidf_bigrams_us_speeches = df.tfidf_bigrams_us_speeches[, -1]
+df.tfidf_bigrams_us_speeches[1:10, 1:10]
+
+## now get apply a function (here: mean) on each column of the data.frame
+
+### test the function on a mini example:
+
+#### the apply function applies a function FUN over the rows (MARGIN = 1) or over the columns (MARGIN = 2). Here we want to get the mean for each columns.
+
+apply(X = df.tfidf_bigrams_us_speeches[1:10, 1:10]
+      , MARGIN = 2
+      , FUN = mean)
+
+## finally: apply function on the full data.frame
+mean_tfidf = apply(df.tfidf_bigrams_us_speeches,  2, mean)
+
+## get element at index of highest value
+mean_tfidf[which.max(mean_tfidf)]
+```
+
+## Task 2: Sentence-based sentiment analysis of the Guardian
+
+In Nov 2017, the allegations around the Weinstein sexual harassment case were among the top topics in the media. We retrieved the Guardian coverage on the keyword "weinstein" for Nov. 2017. Load the data.frame in `weinstein_guardian.RData` from [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/weinstein_guardian.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/weinstein_guardian.RData).
+
+```{r}
+load("/Users/bennettkleinberg/GitHub/UCL_SECU0057/data/weinstein_guardian.RData")
+```
+
+You now have a data.frame called `request.weinstein` in your R work space.
+
+
+Using the above corpus, apply the sentence-based sentiment extraction method from the [`sentimentr`](https://github.com/trinker/sentimentr) package. 
+
+Choose 2 articles and plot the sentiment by sentence across the whole article.
+
+```{r}
+library(sentimentr)
+sentence_1 = sentiment(as.character(request.weinstein$body[22]))
+sentence_2 = sentiment(as.character(request.weinstein$body[12]))
+```
+
+```{r echo=TRUE}
+{plot(x = sentence_1$sentence_id
+     , y = sentence_1$sentiment
+     , type= 'l'
+     , ylim = c(-1, 1))
+abline(h = 0, lty=3)}
+```
+
+
+```{r echo=TRUE}
+{plot(x = sentence_2$sentence_id
+     , y = sentence_2$sentiment
+     , type= 'l'
+     , ylim = c(-1, 1))
+abline(h = 0, lty=3)}
+```
+
+
+## Task 3: Sentiment trajectories
+
+The lecture introduced you to the sentiment trajectory approach. This method can uncover dynamics within a text that static approaches cannot. 
+
+Use the functions of the repository [here](https://github.com/ben-aaron188/naive_context_sentiment) and extract the discrete-cosine-transformed sentiment trajectories for:
+
+- the inaugural speeches and
+- vlogs transcript corpus [available here](https://github.com/ben-aaron188/UCL_SECU0050/blob/master/data/vlogs_corpus.RData)
+
+Answer the questions below:
+
+1. How does the sentiment trajectory of Donald Trump's inauguration speech differ from the first one from Barack Obama?
+2. Of the two YouTubers in the corpus - Casey Neistat and Milo Yiannopoulos - who has on average more positive parts in his videos? (_Hint: here you need to average the standardised vectors for each YouTuber_)
+
+## Task 4: Sentiment trajectories
+
+The lecture introduced you to the sentiment trajectory approach. This method can uncover dynamics within a text that static approaches cannot. 
+
+Use the functions of the repository [here](https://github.com/ben-aaron188/naive_context_sentiment) and extract the discrete-cosine-transformed sentiment trajectories for:
+
+- the inaugural speeches and
+- vlogs transcript corpus [available here](https://github.com/ben-aaron188/UCL_SECU0050/blob/master/data/vlogs_corpus.RData)
+
+Answer the questions below:
+
+1. How does the sentiment trajectory of Donald Trump's inauguration speech differ from the first one from Barack Obama?
+2. Of the two YouTubers in the corpus - Casey Neistat and Milo Yiannopoulos - who has on average more positive parts in his videos? (_Hint: here you need to average the standardised vectors for each YouTuber_)
+
+```{r}
+# get the inaugural corpus dataframe
+us_speeches_df = us_speeches$documents
+
+# set a running ID variable
+us_speeches_df$id = 1:nrow(us_speeches_df)
+
+# load the ncs function
+source('/Users/bennettkleinberg/GitHub/naive_context_sentiment/ncs.R')
+
+# extract length-standardised trajectory
+us_speeches_traj = ncs_full(txt_input_col = us_speeches_df$texts
+                     , txt_id_col = us_speeches_df$id
+                     , bin_transform = T)
+
+```
+
+
+```{r echo=T}
+# to plot it, we need to extract the wanted element from the list
+
+## first we need to find out at which index the speeches are
+View(us_speeches_df)
+
+index_obama = 56
+index_trump = 58
+
+{plot(us_speeches_traj[[index_obama]]
+     , type='l'
+     , col = 'blue'
+     , ylim = c(-1,1)
+     , ylab = 'Sentiment'
+     , xlab = 'Temporal progression %'
+     , main = 'Inaugural speeches (Obama = blue, Trump = red)')
+lines(us_speeches_traj[[index_trump]], col='red')
+  }
+
+```
+
+
+
+
+
+```{r echo=T}
+# Q2: standardized sentiment of vloggers
+
+## load vlog data
+### note that this file makes it easier because it contains the vlogger name
+load('/Users/bennettkleinberg/GitHub/UCL_SECU0057/data/vlogs_data_with_text.RData')
+
+vlogs_traj = ncs_full(txt_input_col = vlogs_with_text$text
+                     , txt_id_col = vlogs_with_text$channel_vlog_id
+                     , bin_transform = T
+                     , verbose = F)
+```
+
+```{r echo=T}
+## we can see that the data are not in the tidy format so we need to transpose them (so that one row represents a vlog)
+#View(vlogs_traj)
+t_vlogs_traj = t(vlogs_traj)
+#View(t_vlogs_traj)
+
+### the transposition creates a matrix that we want to set as a dataframe
+df_t_vlogs_traj = data.frame(t_vlogs_traj, row.names = row.names(t_vlogs_traj))
+
+## we need to create a variable that contains the vlogger's name
+### you can see that the row names are a good first step
+df_t_vlogs_traj$vlogger = row.names(df_t_vlogs_traj)
+
+### now we simply remove the "_" and the numbers so that we can aggregate by "vlogger"
+library(stringr)
+#### first remove the numbers
+df_t_vlogs_traj$vlogger = str_remove_all(string = df_t_vlogs_traj$vlogger, pattern = "[:digit:]")
+
+#### now remove the underscore
+df_t_vlogs_traj$vlogger = str_remove_all(string = df_t_vlogs_traj$vlogger, pattern = "_")
+
+#### check whether we obtain the desired column
+head(df_t_vlogs_traj$vlogger)
+```
+
+
+
+```{r echo=T}
+## Next we aggregate the data
+shape_by_vlogger = aggregate(df_t_vlogs_traj[1:100], by = list(df_t_vlogs_traj$vlogger), mean)
+
+### we now have the average per vlogger for each of the 100 bin values
+shape_by_vlogger
+```
+
+```{r echo=T}
+## plot the two trajectories
+### for the plot, we want the trajectories in the columns
+t_shape_by_vlogger = t(shape_by_vlogger)
+### create a dataframe from the transposed object
+df_t_shape_by_vlogger = data.frame(t_shape_by_vlogger)
+### set the column names
+names(df_t_shape_by_vlogger) = c('caseyneistat', 'yiannopoulos')
+### remove the first row now
+df_t_shape_by_vlogger = df_t_shape_by_vlogger[-1,]
+#### check whether the variables we have now are numeric values
+class(df_t_shape_by_vlogger$caseyneistat)
+#### convert each to a numeric (hint: you also look at this brief function: https://github.com/ben-aaron188/r_helper_functions/blob/master/toNumeric.R)
+df_t_shape_by_vlogger$caseyneistat = as.numeric(as.character(df_t_shape_by_vlogger$caseyneistat))
+df_t_shape_by_vlogger$yiannopoulos = as.numeric(as.character(df_t_shape_by_vlogger$yiannopoulos))
+
+### note that the aggregation returned a dataframe that we can easily index as usual
+{plot(df_t_shape_by_vlogger$caseyneistat
+     , type='l'
+     , col = 'darkgreen'
+     , ylim = c(-0.5,0.5)
+     , ylab = 'Sentiment'
+     , xlab = 'Temporal progression %'
+     , main = 'Trajectories: Casey Neistat (green), Yiannopoulos (orange)')
+lines(df_t_shape_by_vlogger$yiannopoulos, col='orange')
+abline(h=0, lty=4)
+  }
+
+
+## if you wanted to solve the question mathematically, you could calculate the vector differences between a zero vector and both trajectory vectors.
+```
+
+
+
+
+---
+
+## Homework
+
+### Part 1: Sentiment trajectories continued
+
+The trajectory extraction function put control over several parameters in your hands. Use a few samples of data (e.g. of the corpora above) and pllay around with the following function parameters of the `ncs_full` function:
+
+- low_pass_filter_size
+- transform_values
+- cluster_lower
+- cluster_upper
+- bins
+
+What does this tell you about these parameters? Can you infer the function of each?
+
+
+### Part 2: Keyword-in-context analysis with the `quanteda` package
+
+There might be cases where you are interested in the context in which specific words occur. The `quanteda` package offers a way of doing this kind of keywords-in-context (KWIC) analysis.
+
+- Replicate the minimal example on the [documentation page](https://quanteda.io/reference/kwic.html)
+- Use the KWIC analysis to examine for two articles of the Guardian corpus in which context the word "Weinstein" was used.
+
+
+### Part 3: Next steps for your project
+
+We are approaching mid-term for this module. You should now have a good idea about the kind of data you want to use for the project. Using your previous ideas and revisions of these, start with the data collection if you have not done so yet.
+
+### Part 4: Packages and downloads for next week
+
+- Install the `stringdist` package
+- Download the pre-trained word vectors from: [https://nlp.stanford.edu/projects/glove/](https://nlp.stanford.edu/projects/glove/) (download at least the glove.6B.zip file and unzip it into a folder on your computer called "glove")
+---
