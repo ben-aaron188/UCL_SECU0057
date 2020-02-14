@@ -781,8 +781,8 @@ phrase_<span class="dv">2</span> =<span class="st"> &quot;Numbers are useless&qu
 <h2>Semantic similarity</h2>
 <p>If a method can do this, then we expect:</p>
 <ul>
-<li><span class="math inline">\(cossim(sand, beach) &lt; cossim(bleach, beach)\)</span></li>
-<li><span class="math inline">\(cossim(euro, dollar) &lt; cossim(neuro, euro)\)</span></li>
+<li><span class="math inline">\(cossim(sand, beach) &gt; cossim(bleach, beach)\)</span></li>
+<li><span class="math inline">\(cossim(euro, dollar) &gt; cossim(neuro, euro)\)</span></li>
 </ul>
 </section>
 <section id="word-embeddings" class="slide level2">
@@ -966,7 +966,7 @@ phrase_<span class="dv">2</span> =<span class="st"> &quot;Numbers are useless&qu
 </section>
 <section id="our-expectations-1" class="slide level2">
 <h2>Our expectations (1)</h2>
-<p><span class="math inline">\(cossim(sand, beach) &lt; cossim(bleach, beach)\)</span></p>
+<p><span class="math inline">\(cossim(sand, beach) &gt; cossim(bleach, beach)\)</span></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sand_emb =<span class="st"> </span><span class="kw">as.vector</span>(glove.pt[<span class="kw">row.names</span>(glove.pt) <span class="op">==</span><span class="st"> 'sand'</span>, ])
 beach_emb =<span class="st"> </span><span class="kw">as.vector</span>(glove.pt[<span class="kw">row.names</span>(glove.pt) <span class="op">==</span><span class="st"> 'beach'</span>, ])
 bleach_emb =<span class="st"> </span><span class="kw">as.vector</span>(glove.pt[<span class="kw">row.names</span>(glove.pt) <span class="op">==</span><span class="st"> 'bleach'</span>, ])</code></pre></div>
@@ -982,7 +982,7 @@ bleach_emb =<span class="st"> </span><span class="kw">as.vector</span>(glove.pt[
 </section>
 <section id="our-expectations-2" class="slide level2">
 <h2>Our expectations (2)</h2>
-<p><span class="math inline">\(cossim(euro, dollar) &lt; cossim(neuro, euro)\)</span></p>
+<p><span class="math inline">\(cossim(euro, dollar) &gt; cossim(neuro, euro)\)</span></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">euro_emb =<span class="st"> </span><span class="kw">as.vector</span>(glove.pt[<span class="kw">row.names</span>(glove.pt) <span class="op">==</span><span class="st"> 'euro'</span>, ])
 dollar_emb =<span class="st"> </span><span class="kw">as.vector</span>(glove.pt[<span class="kw">row.names</span>(glove.pt) <span class="op">==</span><span class="st"> 'dollar'</span>, ])
 neuro_emb =<span class="st"> </span><span class="kw">as.vector</span>(glove.pt[<span class="kw">row.names</span>(glove.pt) <span class="op">==</span><span class="st"> 'neuro'</span>, ])</code></pre></div>

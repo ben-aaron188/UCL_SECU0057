@@ -347,8 +347,8 @@ stringsim(phrase_1, phrase_2, q=3, method = 'cosine')
 
 If a method can do this, then we expect:
 
-- $cossim(sand, beach) < cossim(bleach, beach)$
-- $cossim(euro, dollar) < cossim(neuro, euro)$
+- $cossim(sand, beach) > cossim(bleach, beach)$
+- $cossim(euro, dollar) > cossim(neuro, euro)$
 
 ## Word embeddings
 
@@ -431,7 +431,7 @@ Code: [https://github.com/ben-aaron188/r_helper_functions/blob/master/init_glove
 
 ## Our expectations (1)
 
-$cossim(sand, beach) < cossim(bleach, beach)$
+$cossim(sand, beach) > cossim(bleach, beach)$
 
 ```{r eval=F}
 sand_emb = as.vector(glove.pt[row.names(glove.pt) == 'sand', ])
@@ -457,7 +457,7 @@ cossim(beach_emb, bleach_emb)
 
 ## Our expectations (2)
 
-$cossim(euro, dollar) < cossim(neuro, euro)$
+$cossim(euro, dollar) > cossim(neuro, euro)$
 
 ```{r eval=F}
 euro_emb = as.vector(glove.pt[row.names(glove.pt) == 'euro', ])
