@@ -205,7 +205,7 @@ Please ensure that you follow the guides below to setup your computer with the n
     - Bolukbasi, T., Chang, K.-W., Zou, J., Saligrama, V., & Kalai, A. (2016). Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings. ArXiv:1607.06520 [Cs, Stat]. [http://arxiv.org/abs/1607.06520](http://arxiv.org/abs/1607.06520)
     - Vylomova, E., Rimell, L., Cohn, T., & Baldwin, T. (2016). Take and Took, Gaggle and Goose, Book and Read: Evaluating the Utility of Vector Differences for Lexical Relation Learning. ArXiv:1509.01692 [Cs]. [http://arxiv.org/abs/1509.01692](http://arxiv.org/abs/1509.01692)
 - Slides: [Week 5: Text mining 3](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_5/week5_secu0057.html), [PDF](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/lectures/week_5/week5_secu0057.pdf)
-- Tutorial + Homework: [Tutorial, week 5: Text mining 3](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_5/week5_tutorial_secu0057.nb.html)
+- Tutorial + Homework: [Tutorial, week 5: Text mining 3](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_5/week5_tutorial_secu0057.nb.html), [Tutorial solutions](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/tutorials/week_5/week5_tutorial_secu0057_solutions.Rmd)
 
 ### Week 6 - Reading week
 
