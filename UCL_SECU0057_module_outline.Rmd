@@ -340,6 +340,7 @@ All datasets used are open-source and available without restrictions.
 - Learning outcomes tested: (1) demonstrating knowledge of a broader range of analytical techniques used in the field of Security and Crime Science, (2) performing data science analyses on crime and/or-security related issues, (3) applying the data science pipeline on crime and/or-security related issues, (4) interpreting and effectively reporting the results of said techniques
 - Deadline: 16 April 2020, 4pm.
 - Page limit: See below.
+- Assessment details as [PDF](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/assessment/SECU0057_project_assignment.pdf).
 
 > _This assessment is the capstone project of the module. It requires you to address a research problem in the full data science workflow (e.g., obtaining the data, processing the data, modelling the data, building predictive models, reporting on the findings, interpreting the outcomes). You will write a brief report on your project (a template will be provided) and you have to submit the R code needed to reproduce your findings. After passing this assessment, you will have the demonstrated the skills to solve a problem using data science techniques._
 
@@ -347,6 +348,7 @@ All datasets used are open-source and available without restrictions.
 
 A full project is a major step in your data science skills career. To help you in the process, you will receive feedback from us on a concept draft of your project. The deadline for the concept draft is **9 March 2020 (4pm)** via Turn-it-in on moodle. The requirements for the feedback submission are available on moodle. _The submission of the concept draft accounts for 10% of the Applied Data Science Project._ 
 
+- Feedback form template as [PDF](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/assessment/project_concept_draft_template.pdf).
 
 #### Assessment topic
 
