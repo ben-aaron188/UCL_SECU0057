@@ -87,7 +87,7 @@ data2 = data1[sample(1:20, 20), ]
 
 ## Higher dimensional data
 
-```{r}
+```{r echo=F}
 set.seed(123457)
 data2 = data.frame(account = rep(c('bot', 'real'), each=100)
                    , tweet_freq = round(c(rnorm(100, 35, 5), rnorm(100, 25, 10)), 0)
@@ -112,7 +112,7 @@ abline(v = min(data2$tweet_freq[data2$account == 'bot']), col='black', lwd=2, lt
 
 ## 
 
-```{r}
+```{r echo=F}
 plot(data2$tweet_freq, data2$following, col=data2$account
      , pch=19
      , xlab = 'Tweets/day'
@@ -369,7 +369,7 @@ nb_pred = predict(nb_model, test_data)
 ```{r echo=F}
 knitr::kable(table(test_data$account, svm_pred), caption = 'SVM model')
 ```
-```{r}
+```{r echo=F}
 knitr::kable(table(test_data$account, nb_pred), caption = 'NB model')
 ```
 
