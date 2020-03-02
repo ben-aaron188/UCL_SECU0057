@@ -223,7 +223,7 @@ _Use this week to catch up on any literature or homework/tutorials._
     - [Kuhn, 2019: C17 Measuring performance](https://topepo.github.io/caret/measuring-performance.html)
 
 - Recommended: [YT, 3Blue1Brown: Bayes theorem, and making probability intuitive](https://www.youtube.com/watch?v=HZGCoVF3YvM)
-- Slides: [Week 7: Machine Learning 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_7/week7_secu0057.html)
+- Slides: [Week 7: Machine Learning 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/lectures/week_7/week7_secu0057.html), [PDF](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/lectures/week_7/week7_secu0057.pdf)
 - Tutorial + Homework: [Tutorial, week 7: Machine Learning 1](https://raw.githack.com/ben-aaron188/UCL_SECU0057/master/tutorials/week_7/week7_tutorial_secu0057.nb.html)
 
 
