@@ -1,0 +1,332 @@
+---
+title: "Tutorial, Week 7: Machine learning 1"
+subtitle: "SECU0057"
+author: "B Kleinberg"
+date: "27 Feb 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- applying supervised learning for vlogger identification
+- extracting features from text
+- running full text classification tasks in R
+
+
+_Note: this tutorial assumes that you have installed the `caret` package._
+
+## Task 1: Identifying vloggers based on vlog transcripts
+
+Retrieve the dataframe stored in the RData file 'vlogs_unigrams' from [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_unigrams.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_unigrams.RData). This dataset contains features extracted from the transcripts of two YouTube vloggers (have a look at the column 'vlogger_name'). 
+
+Specifically, the features are counts unigrams (already sparsity-corrected). Your task is to use machine learning to investigate whether the vlogger can be identified through the use of specific unigrams in their vlogs.
+
+Use the following settings:
+
+- train/test split: 0.6
+- 10-fold cross-validation
+- Linear SVM classification algorithm
+
+Questions:
+
+- What is the overall accuracy?
+- Is the model better for one of the two YouTubers?
+- What is the area under the curve of your model on the test set?
+
+
+```{r}
+# load the data
+load('/Users/bennettkleinberg/GitHub/UCL_SECU0057/data/vlogs_unigrams.RData')
+```
+
+```{r}
+# prepare data for supervised learning task
+
+## Running `names(vlogs_unigrams)` shows you that there are three variables in there that are not numeric and a not our outcome variable, so we remove these:
+
+ml_data = vlogs_unigrams[, -c(1:3)]
+
+# check if there are no constants (i.e. data points that do not change);
+##Note that this can be the case here since the dfm matrix was created on a biogger vlogger dataset.
+##Since we know that the variance of a constant is zero, we can inspect the data as follows:
+ncol(ml_data)
+table(apply(ml_data[, -1269], 1, var) == 0)
+##the command test for each column whether the variance is zero (not that we exclude the last column since this is the vlogger name)
+
+#We see that one variable is constant.
+```
+
+```{r}
+# include preprocessing into ML pipeline:
+
+## we can add the removal of zero-variance values automatically into the caret pipeline by adding the `preProcess = c('zv')` argument in the train function
+
+## create train/test split
+library(caret)
+set.seed(123)
+in_training = createDataPartition(y = ml_data$vlogger_name
+                                  , p = .6
+                                  , list = FALSE
+                                  )
+
+training_data = ml_data[ in_training,]
+testing_data = ml_data[-in_training,]
+
+## set training control parameters
+training_controls = trainControl(method="cv"
+                        , number = 10
+                        , classProbs = T)
+
+###Note that we set `classProbs = T` so we retain the class probabilities for the AUC calculation
+
+
+## train the model
+model.svm = train(vlogger_name ~ .
+                  , data = training_data
+                  , method = "svmLinear"
+                  , trControl = training_controls
+                  , preProcess = c('zv')
+                 )
+
+```
+
+```{r}
+## Now we fit the model to the test data and evaluate it:
+
+###For the class predictions
+pred = predict(model.svm, testing_data)
+
+###For the class probabilities
+probs = predict(model.svm, testing_data, type = 'prob')[,1]
+
+## confusion matrix
+confusionMatrix(pred, as.factor(testing_data$vlogger_name))
+### We see that the model is very accurate in telling who the vlog is from.
+### We also see that the precision is higher for "MoreMarcus" while the recall is higher for "caseyneistat"
+```
+
+```{r}
+## Lastly, we evaluate the model by its area under the curve:
+library(pROC)
+roc_data = roc(response = testing_data$vlogger_name
+               , predictor = probs
+               , ci=T)
+roc_data
+
+```
+
+
+
+Now re-run the classification and use the settings below:
+
+- train/test split: 0.8
+- 5-fold cross-validation
+- repeated cross-validation 10 times (Hint: have a look at 5.3 Basic Parameter Tuning in [https://topepo.github.io/caret/model-training-and-tuning.html](https://topepo.github.io/caret/model-training-and-tuning.html))
+- Naive Bayes classification algorithm
+
+Questions:
+
+- What is the overall accuracy?
+- Is the model better for one of the two YouTubers?
+- What is the area under the curve of your model on the test set?
+- Is the NB model better than the SVM model?
+
+```{r}
+#(These questions should be doable by copy-pasting the above code with some adjustments)
+```
+
+
+## Task 2: Extracting features from raw text data
+
+The next step to proper text classification is that you extract features from the raw text data. You can access the raw vlog transcripts at [https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_corpus_large.RData](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/data/vlogs_corpus_large.RData). The file is called `vlogs_corpus_large.RData` and loads a corpus object called `vlogs_corpus_large`, which contains the raw vlogs of the two YouTubers you ran the classification task on above.
+
+Your task now is to extract features yourself so you can prepare the data for supervised classification.
+
+
+1. Extract the bigrams and trigrams from the vlog transcripts.
+
+```{r}
+#load the data
+load('/Users/bennettkleinberg/GitHub/UCL_SECU0057/data/vlogs_corpus_large.RData')
+
+bigrams = dfm(vlogs_corpus_large
+              , tolower = T
+              , ngrams = 2
+              , remove_punct = TRUE
+              )
+trigrams = dfm(vlogs_corpus_large
+              , tolower = T
+              , ngrams = 3
+              , remove_punct = TRUE
+              )
+```
+
+
+2. Apply a sparsity correction to reduce the zero counts.
+
+```{r}
+bigrams_corrected = dfm_trim(bigrams, sparsity = .95)
+trigrams_corrected = dfm_trim(trigrams, sparsity = .95)
+```
+
+```{r}
+# Check whether the dimensions were reduced and how:
+dim(bigrams)
+```
+
+```{r}
+dim(bigrams_corrected)
+
+#You can see that from initially 426,686 different bigrams, we reduced it to 1,780 bigrams (= those that occur in at least 5% of the document)
+```
+
+
+
+3. What are the Top 10 most used bigrams of each vlogger?
+
+```{r}
+vlogs_bigrams = convert(bigrams_corrected, 'data.frame')
+
+# we need to define a variable that gives us the vlogger name
+# the variable "document" lists the vlogs by vlogger appended with a running number
+head(vlogs_bigrams$document)
+```
+
+
+```{r}
+# we create a new variable from it and then remove the old one:
+vlogs_bigrams$vlogger_id = ifelse(substr(vlogs_bigrams$document, 1, 5) == "casey"
+                                  , "CN"
+                                  , "MM")
+#This ifelse statement uses `substr` to test whether the first 5 characters equal "casey". If they do, we assign this new variable the value CN, if not, it's MM
+
+# Now we can remove the original `document` variable and group the data
+vlogs_bigrams = vlogs_bigrams[, -1]
+
+# Keep in mind that we need to reconvert this data.frame to a dfm object so we can extract the top features:
+CN_vlogs_bigrams_dfm = as.dfm(vlogs_bigrams[vlogs_bigrams$vlogger_id == 'CN', ])
+topfeatures(CN_vlogs_bigrams_dfm)
+
+MM_vlogs_bigrams_dfm = as.dfm(vlogs_bigrams[vlogs_bigrams$vlogger_id == 'MM', ])
+topfeatures(MM_vlogs_bigrams_dfm)
+
+# Note that the as.dfm procedure now treats the "vlogger_id" variable as a feature. This is not a problem for now but can be avoided by grouping the data earlier.
+```
+
+
+4. Store the bigrams in a dataframe that you can use for text classification. Name that dataframe as `vlogs_bigrams`
+
+```{r}
+#see above
+dim(vlogs_bigrams)
+```
+
+
+## Task 3: Full text classification tasks 
+
+The pipeline from text to classification involves both the feature extraction as well as the modelling of the relationship between an outcome and some features.
+
+For this task we ask you to use the raw corpus above and retrieve the following features:
+
+- TFIDF-weighted unigrams and bigrams
+- an average sentiment score
+- the Coleman-Liau readability
+
+```{r}
+#TFIDF
+unigrams = dfm(vlogs_corpus_large
+               , ngrams = 1
+               , tolower = T
+               , remove_punct = TRUE)
+unigrams_corrected = dfm_trim(unigrams, sparsity = 0.95)
+
+unigrams_tfidf = dfm_tfidf(unigrams_corrected
+                          , scheme_tf = 'count'
+                          , scheme_df = 'inverse')
+bigrams_tfidf = dfm_tfidf(bigrams_corrected
+                          , scheme_tf = 'count'
+                          , scheme_df = 'inverse')
+```
+
+```{r}
+#AVG SENTIMENT
+library(syuzhet)
+df_vlogs_data = vlogs_corpus_large$documents
+df_vlogs_data$sentiment_score = get_sentiment(df_vlogs_data$texts)
+
+#CLI readability
+cli = textstat_readability(df_vlogs_data$texts, measure = 'Coleman.Liau')
+df_vlogs_data$cli = cli$Coleman.Liau
+
+#ADD grouping variable
+df_vlogs_data$vlogger = ifelse(substr(rownames(df_vlogs_data), 1, 5) == "casey"
+                                  , "CN"
+                                  , "MM")
+```
+
+
+Answer these questions:
+
+1. Do the two vloggers differ in the average sentiment of their vlogs? Determine this numerically and also plot the data.
+
+```{r echo=TRUE}
+tapply(X = df_vlogs_data$sentiment_score, INDEX = df_vlogs_data$vlogger, FUN = mean)
+```
+
+```{r echo=F}
+boxplot(df_vlogs_data$sentiment_score ~ df_vlogs_data$vlogger)
+```
+
+
+2. Whose vlog has the highest readability?
+
+```{r}
+df_vlogs_data[which.max(df_vlogs_data$cli), ]
+```
+
+
+3. What are the F1 scores and the AUCs for classification tasks with (i) the TFIDF-weighted unigrams, (ii) the TFIDF-weighted bigrams, (iii) the TFIDF-weighted unigrams, bigrams, sentiment and readability combined? Use classification settings of your choice.
+
+```{r}
+#(use the ML pipelines from above)
+#The best approach is to create different feature set objects: e.g. ml_data_tfidf, ml_data_combined, ...
+```
+
+
+
+---
+
+## Homework
+
+### Part 1: Sentiment classification of movie reviews
+
+To practice further with machine learning classification, download the commonly used IMDB movie reviews dataset from [https://ai.stanford.edu/~amaas/data/sentiment/](https://ai.stanford.edu/~amaas/data/sentiment/). This dataset contains 25k pos/neg reviews for training and another 25k pos/neg reviews for testing.
+
+Once you have downloaded the data (raw text files of the reviews), read these into an R dataframe and run text classification on it. You are free to choose which feature sets, algorithm and meta settings you want to use. Evaluate your model(s) on the test set file.
+
+Hint: in order to read the single files into a dataframe in R efficiently and quickly, you can use the `txt_df_from_dir` function available on GutHub at [https://github.com/ben-aaron188/r_helper_functions/blob/master/txt_df_from_dir.R](https://github.com/ben-aaron188/r_helper_functions/blob/master/txt_df_from_dir.R). You will need to do this for positive and negative reviews separately, attach an outcome column to each and the combine them with `rbind`.
+
+```{r}
+#Your code
+```
+
+
+
+### Part 2: Read about loss functions
+
+Statistical modelling inherently contains some optimisation (e.g. to find the best parameters for a line that fits the data). The optimisation works because we use specific functions to minimise some metric. In machine learning, this is often referred to as the loss function. The brief series of articles below gives you a good overview to grasp the basics of loss functions for machine learning.
+
+- [Loss functions 1](https://towardsdatascience.com/optimization-of-supervised-learning-loss-function-under-the-hood-df1791391c82)
+- [Loss functions 2](https://towardsdatascience.com/optimization-loss-function-under-the-hood-part-ii-d20a239cde11)
+- [Loss functions 3](https://towardsdatascience.com/optimization-loss-function-under-the-hood-part-iii-5dff33fa015d)
+
+
+### Part 3: Packages for the next session
+
+Install the following packages:
+
+- factoextra
+- cluster
+
+---
