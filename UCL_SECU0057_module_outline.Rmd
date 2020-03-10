@@ -243,45 +243,27 @@ _Use this week to catch up on any literature or homework/tutorials._
 Guest lecture: Josh Kamps (Doctoral researcher)
 
 - Topics covered: neural networks in R, intro to deep learning
-- Required preparation: [tbc]
+- Required preparation:
+    - Domingos, P. (2012). A few useful things to know about machine learning. Communications of the ACM, 55(10), 78. https://doi.org/10.1145/2347736.2347755
+    - Nielsen, M. A. (2015). Neural Networks and Deep Learning. http://neuralnetworksanddeeplearning.com
 - Slides: [tbc]
 - Tutorial + homework: [tbc]
 
 
 ### Week 10 - Case studies (19 Mar)
 
-<!-- This lecture includes a guest talk: -->
+This lecture includes two guest talks:
 
-<!-- Guest lecture: Daniel Hammocks (Doctoral researcher) - "Facial recognition systems"  -->
-
-<!-- - Required preparation -->
-<!--     - Metropolitan Police (2019). Live Facial Recognition. [https://www.met.police.uk/live-facial-recognition-trial/](https://www.met.police.uk/live-facial-recognition-trial/) -->
-<!--     - Big Brother Watch (2018). The lawless growth of facial recognition in UK policing. [https://bigbrotherwatch.org.uk/wp-content/uploads/2018/05/Face-Off-final-digital-1.pdf](https://bigbrotherwatch.org.uk/wp-content/uploads/2018/05/Face-Off-final-digital-1.pdf) -->
-<!--     - Machine Learning From Scratch: Part 3 - Arrays and representations. [https://towardsdatascience.com/machine-learning-from-scratch-part-3-ed572330367d](https://towardsdatascience.com/machine-learning-from-scratch-part-3-ed572330367d) -->
-<!--     - Biometrics and Forensics Ethics Group (2019). Ethical issues arising from the police use of live facial recognition technology. [https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/781745/Facial_Recognition_Briefing_BFEG_February_2019.pdf](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/781745/Facial_Recognition_Briefing_BFEG_February_2019.pdf) -->
-<!--     - Recommended: Viola, P., & Jones, M. (2001). Rapid object detection using a boosted cascade of simple features. Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition. CVPR 2001, 1, I–I. [https://doi.org/10.1109/CVPR.2001.990517](https://doi.org/10.1109/CVPR.2001.990517) -->
-<!-- - Slides -->
-<!-- - Tutorial -->
-<!-- - Homework -->
-
-<!-- ### Week 11 - Case studies II (26 Mar) -->
-
-<!-- This lecture includes two guest talks: -->
-
-- Daniel Hammocks - "Facial recognition systems"
 - Maximilian Mozes - "On the robustness of intelligent systems" 
 - Isabelle van der Vegt - "Data Science for Threat Assessment" 
 
 - Required preparation
-    - Metropolitan Police (2019). Live Facial Recognition. [https://www.met.police.uk/live-facial-recognition-trial/](https://www.met.police.uk/live-facial-recognition-trial/)
-    - Machine Learning From Scratch: Part 3 - Arrays and representations. [https://towardsdatascience.com/machine-learning-from-scratch-part-3-ed572330367d](https://towardsdatascience.com/machine-learning-from-scratch-part-3-ed572330367d)
-    - Biometrics and Forensics Ethics Group (2019). Ethical issues arising from the police use of live facial recognition technology. [https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/781745/Facial_Recognition_Briefing_BFEG_February_2019.pdf](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/781745/Facial_Recognition_Briefing_BFEG_February_2019.pdf)
     - Gu, T., Dolan-Gavitt, B., & Garg, S. (2019). BadNets: Identifying Vulnerabilities in the Machine Learning Model Supply Chain. ArXiv:1708.06733 [Cs]. Retrieved from [http://arxiv.org/abs/1708.06733](http://arxiv.org/abs/1708.06733)
     - Kurakin, A., Goodfellow, I., & Bengio, S. (2017). Adversarial examples in the physical world. ArXiv:1607.02533 [Cs, Stat]. Retrieved from [http://arxiv.org/abs/1607.02533](http://arxiv.org/abs/1607.02533)
     - Azucar, D., Marengo, D., & Settanni, M. (2018). Predicting the Big 5 personality traits from digital footprints on social media: A meta-analysis. Personality and Individual Differences, 124, 150–159. [https://doi.org/10.1016/j.paid.2017.12.018](https://doi.org/10.1016/j.paid.2017.12.018)
     - van der Vegt, I., Mozes, M., Gill, P., & Kleinberg, B. (2019). Online influence, offline violence: Linguistic responses to the “Unite the Right” rally. ArXiv:1908.11599 [Cs]. Retrieved from http://arxiv.org/abs/1908.11599
 - Slides: [tbc]
-- Tutorial + Homework: [tbc]
+- Tutorial + Homework: _You can spend this tutorial working on your project under our guidance._
 
 
 ## Materials
