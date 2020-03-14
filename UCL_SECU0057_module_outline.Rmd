@@ -246,8 +246,8 @@ Guest lecture: Josh Kamps (Doctoral researcher)
 - Required preparation:
     - Domingos, P. (2012). A few useful things to know about machine learning. Communications of the ACM, 55(10), 78. https://doi.org/10.1145/2347736.2347755
     - Nielsen, M. A. (2015). Neural Networks and Deep Learning. http://neuralnetworksanddeeplearning.com
-- Slides: [tbc]
-- Tutorial + homework: [tbc]
+- Slides: [Week 9 : Machine Learning 3](https://github.com/ben-aaron188/UCL_SECU0050/blob/master/lectures/week_9/week9_secu0050.pdf)
+- Tutorial + homework: [Tutoriall, week 9: Machine Learning 3](https://raw.githack.com/JoshKamps/JoshKamps.github.io/master/week9_tutorial_secu0050.nb.html#)
 
 
 ### Week 10 - Case studies (19 Mar)
