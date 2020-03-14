@@ -1,0 +1,87 @@
+---
+title: "Tutorial, Week 9: Machine learning 3"
+subtitle: "SECU0050"
+author: "Josh Kamps"
+date: "9 Mar 2020"
+output: html_notebook
+urlcolor: blue
+---
+
+Aims of this tutorial:
+
+- investigate neural network architecture and how parameters affect results
+- train your first NN in R
+- visualise the output of your NN
+
+_Note: this tutorial assumes that you have installed the `neuralnet`,`ISLR`, and `caret` packages._
+
+## Task 1: Your first NN
+
+For this task, we will be using the [tensorflow playground visualisation](https://playground.tensorflow.org/#activation=sigmoid&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=&seed=0.52357&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false&discretize_hide=false&activation_hide=false) in order to build our intution regarding neural networks. The objective of this is to get you thinking about how the choices of your net architecture affect the outcome.
+
+Using the link provided above, answer the following questions:
+
+1. The model as given combines our two input features into a single neuron. Will this model learn any nonlinearities? Run it on each of the datasets to confirm your guess.
+
+2. Try adding a hidden layer with two neurons, and note how it performs on each of the datasets. 
+
+3. Paying attention to the XOR data set (top right), continue experimenting with hidden layers and neurons. Also feel free to change learning rates, regularization, and other learning settings. What is the smallest number of neurons and layers you can use that gives test loss of 0.177 or lower? Does increasing the model size improve the fit, or how quickly it converges? Does this change how often it converges to a good model? 
+
+Questions 4 and 5 concerns a noisy [spiral dataset](https://playground.tensorflow.org/#activation=sigmoid&batchSize=10&dataset=spiral&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=50&networkShape=2&seed=0.67944&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false&discretize_hide=false&activation_hide=false)
+
+4. Train the best model you can, using just X1 and X2. Feel free to add or remove layers and neurons, change learning settings like learning rate, regularization rate, and batch size. What is the best test loss you can get? How smooth is the model output surface?
+
+5. Even with Neural Nets, some amount of feature engineering is often needed to achieve best performance. Try adding in additional cross product features or other transformations like sin(X1) and sin(X2). Do you get a better model? Is the model output surface any smoother?
+
+_Credit: Questions were derived from this [crash course](https://developers.google.com/machine-learning/crash-course/introduction-to-neural-networks/playground-exercises)_
+
+## Task 2: Your first NN in R
+Using the neuralnet package in R, create a neural network and visualise it. We will use the ISLR built in College data set which holds various information on colleges in the US. Info on each of the variables can be found in the [documentation](https://cran.r-project.org/web/packages/ISLR/ISLR.pdf). The goal is to predict whether a college is public or private based on its attributes.
+
+Follow these steps:
+
+1. Load the data
+2. Convert the Private column from yes/no to 1/0 (we need all numeric data)
+3. Split the data into training and test set in the same fashion as week 7. (hint: use carets createDataPartition function)
+4. Create the forumla needed for the neural network, similar to how was done in week 7. This will be of the form Private ~ Apps + Accept + Enroll ...
+5. Following the neuralnet documentation, create a NN with 3 hidden layers with 2 neurons each
+6. Using the compute() function from the neuralnet documentation to make predictions on the test set
+7. Round the result labels from 6 to be either 0 or 1, (hint: use sapply) and then compare with the actual test labels (hint: use table to get a basic confusion matrix)
+8. Use the documentation to find out how to plot the network (its simple!)
+
+_Credit: adapted from [kdnuggets](https://www.kdnuggets.com/2016/08/begineers-guide-neural-networks-r.html)_
+```{r}
+#Your code here
+library(neuralnet)
+library(ISLR)
+library(caret)
+
+college_info <- College
+
+# Convert Private column from Yes/No to 1/0
+
+# Split into training and test
+
+# Create NN
+
+# Compute the predictions
+
+# Plot the network
+```
+
+## Task 3: Using the NN to identify vlogger transcripts
+Using the dataset from week 7, see if you can come up with a neural network architecture that outperforms your results from the NB and SVM models. 
+
+```{r}
+#Your code
+```
+
+
+
+---
+
+## Homework
+
+### Continue working on your project
+
+---
