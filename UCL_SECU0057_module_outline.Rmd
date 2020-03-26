@@ -1,7 +1,7 @@
 ---
 title: "APPLIED DATA SCIENCE (UCL SECU0057)"
 author: "Bennett Kleinberg (bennett.kleinberg@ucl.ac.uk)"
-date: "13/01/2020"
+date: "26/03/2020"
 output:
   pdf_document:
     toc: yes
@@ -262,7 +262,7 @@ This lecture includes two guest talks:
     - Kurakin, A., Goodfellow, I., & Bengio, S. (2017). Adversarial examples in the physical world. ArXiv:1607.02533 [Cs, Stat]. Retrieved from [http://arxiv.org/abs/1607.02533](http://arxiv.org/abs/1607.02533)
     - Azucar, D., Marengo, D., & Settanni, M. (2018). Predicting the Big 5 personality traits from digital footprints on social media: A meta-analysis. Personality and Individual Differences, 124, 150–159. [https://doi.org/10.1016/j.paid.2017.12.018](https://doi.org/10.1016/j.paid.2017.12.018)
     - van der Vegt, I., Mozes, M., Gill, P., & Kleinberg, B. (2019). Online influence, offline violence: Linguistic responses to the “Unite the Right” rally. ArXiv:1908.11599 [Cs]. Retrieved from http://arxiv.org/abs/1908.11599
-- Slides: [tbc]
+- Slides: _video-recorded lectures due to the Corona virus situation_
 - Tutorial + Homework: _You can spend this tutorial working on your project under our guidance._
 
 
@@ -307,20 +307,28 @@ All datasets used are open-source and available without restrictions.
 
 ## Assessment
 
-### Class test
+### Coursework
 
 - Weight for final grade: 30%
 - Learning outcomes tested: (1) demonstrating knowledge of a broader range of analytical techniques used in the field of Security and Crime Science, (2) understanding the purpose, advantages and disadvantages of different forms of data science techniques, (3) interpreting the results of data science techniques.
-- Date: 26 March 2020, during the normal lecture+tutorial hours, 2pm-4pm.
+- Deadline: 30 April 2020, 4pm
 
-**Details:** This 1.5-hour closed-book test covers theoretical, technical and conceptual aspects of the lectures, tutorials and literature. You will be given 15 multiple-choice questions. For each question, there will be five possible answer options. At least one option is correct and you are asked to select all options that apply (i.e. this could be one, two, three, four, or all five options). **If you select the correct - _and only the correct_ - combination of answer options, you will be given ten points for a question.** In total, you can achieve 150 points in this test (transformed to a percentage grade).
+You receive 4 questions that you have to answer using methods and techniques covered in this module.
 
+#### Grading criteria
+
+| Criterion                   	| Meaning                                                            	| Weight 	|
+|-----------------------------	|--------------------------------------------------------------------	|--------	|
+| Quality of the answer to Q1 	| The quality of the solution provided to question 1 (incl. R code). 	| 25%    	|
+| Quality of the answer to Q2 	| The quality of the solution provided to question 2 (incl. R code). 	| 25%    	|
+| Quality of the answer to Q3 	| The quality of the solution provided to question 3 (incl. R code). 	| 25%    	|
+| Quality of the answer to Q4 	| The quality of the solution provided to question 4 (incl. R code). 	| 25%    	|
 
 ### Applied Data Science Project
 
 - Weight for final grade: 70%
 - Learning outcomes tested: (1) demonstrating knowledge of a broader range of analytical techniques used in the field of Security and Crime Science, (2) performing data science analyses on crime and/or-security related issues, (3) applying the data science pipeline on crime and/or-security related issues, (4) interpreting and effectively reporting the results of said techniques
-- Deadline: 16 April 2020, 4pm.
+- Deadline: 30 April 2020, 4pm.
 - Page limit: See below.
 - Assessment details as [PDF](https://github.com/ben-aaron188/UCL_SECU0057/blob/master/assessment/SECU0057_project_assignment.pdf).
 
@@ -368,8 +376,8 @@ Additional requirements for the report:
 #### Deliverables
 
 - Concept draft (9 Mar 2020)
-- Project report (16 April 2020)
-- Code supplement (16 April 2020)
+- Project report (30 April 2020, 4pm)
+- Code supplement (30 April 2020, 4pm)
 
 #### Grading criteria
 
